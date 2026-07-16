@@ -651,20 +651,24 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
             </div>
             <div>
               <label class="fl">03 — Voice</label>
-              <select id="voiceSelect">
-                <option value="english-warm_friendly">🇺🇸 English — Warm &amp; Friendly (F)</option>
-                <option value="english-energetic_male">🇺🇸 English — Energetic (M)</option>
-                <option value="english-calm_female">🇺🇸 English — Calm (F)</option>
-                <option value="english-deep_authoritative">🇺🇸 English — Deep &amp; Authoritative (M)</option>
-                <option value="english-professional_female">🇺🇸 English — Professional (F)</option>
-                <option value="urdu-male">🇵🇰 Urdu — Male</option>
-                <option value="urdu-female">🇵🇰 Urdu — Female</option>
-                <option value="hindi-male">🇮🇳 Hindi — Male</option>
-                <option value="hindi-female">🇮🇳 Hindi — Female</option>
-                <option value="german-male">🇩🇪 German — Male</option>
-                <option value="german-female">🇩🇪 German — Female</option>
-                <option value="spanish-male">🇪🇸 Spanish — Male</option>
-                <option value="spanish-female">🇪🇸 Spanish — Female</option>
+             <select id="voiceSelect">
+                <optgroup label="🇺🇸 English — ElevenLabs Voices">
+                  <option value="english-warm_friendly">Bella — Warm &amp; Friendly (F)</option>
+                  <option value="english-energetic_male">Josh — Energetic (M)</option>
+                  <option value="english-calm_female">Rachel — Calm &amp; Clear (F)</option>
+                  <option value="english-deep_authoritative">Adam — Deep &amp; Authoritative (M)</option>
+                  <option value="english-professional_female">Domi — Professional (F)</option>
+                </optgroup>
+                <optgroup label="🌍 Other Languages — ElevenLabs">
+                  <option value="urdu-male">🇵🇰 Urdu — Male</option>
+                  <option value="urdu-female">🇵🇰 Urdu — Female</option>
+                  <option value="hindi-male">🇮🇳 Hindi — Male</option>
+                  <option value="hindi-female">🇮🇳 Hindi — Female</option>
+                  <option value="german-male">🇩🇪 German — Male</option>
+                  <option value="german-female">🇩🇪 German — Female</option>
+                  <option value="spanish-male">🇪🇸 Spanish — Male</option>
+                  <option value="spanish-female">🇪🇸 Spanish — Female</option>
+                </optgroup>
               </select>
             </div>
           </div>
@@ -1360,15 +1364,59 @@ async function pollStatus(jobId){
     const stage=data.progress?.stage||data.state;
     progressBar.style.width=`${pct}%`;
     statusText.textContent=`${stage.toUpperCase()} — ${pct}% complete`;
-    if(data.state==='completed'){
+   if(data.state==='completed'){
       btn.disabled=false;btn.textContent='🚀 Generate Another Video';
       const vUrl=data.result.videoPath;
       resultBox.innerHTML=`
         <video controls style="width:100%;border-radius:8px;margin-top:8px;"></video>
-        <a id="downloadVideoBtn" download="reelforge-video.mp4" style="display:block;text-align:center;background:var(--blue);color:#fff;font-weight:700;padding:10px;border-radius:8px;text-decoration:none;margin-top:10px;">⬇️ Download Video</a>
+        <button id="downloadVideoBtn" style="display:block;width:100%;text-align:center;background:var(--blue);color:#fff;font-weight:700;padding:10px;border-radius:8px;border:none;cursor:pointer;margin-top:10px;">⬇️ Download Video</button>
+        <div id="dlProgress" style="display:none;margin-top:8px;">
+          <div style="background:var(--border);border-radius:99px;height:6px;overflow:hidden;">
+            <div id="dlBar" style="height:100%;background:var(--blue);width:0%;transition:width 0.3s;border-radius:99px;"></div>
+          </div>
+          <p id="dlPct" style="font-size:12px;color:var(--muted);text-align:center;margin-top:4px;">0%</p>
+        </div>
         <p style="font-size:13px;color:var(--body);margin-top:8px;text-align:center;">✅ Your video is ready!</p>`;
       resultBox.querySelector('video').src=vUrl;
-      resultBox.querySelector('#downloadVideoBtn').href=vUrl;
+      resultBox.querySelector('#downloadVideoBtn').addEventListener('click',async()=>{
+        const dlBtn=document.getElementById('downloadVideoBtn');
+        const dlProgress=document.getElementById('dlProgress');
+        const dlBar=document.getElementById('dlBar');
+        const dlPct=document.getElementById('dlPct');
+        dlBtn.disabled=true;
+        dlBtn.textContent='⏳ Downloading...';
+        dlProgress.style.display='block';
+        try{
+          const resp=await fetch(vUrl);
+          const total=parseInt(resp.headers.get('content-length')||'0');
+          const reader=resp.body.getReader();
+          const chunks=[];
+          let received=0;
+          while(true){
+            const {done,value}=await reader.read();
+            if(done)break;
+            chunks.push(value);
+            received+=value.length;
+            if(total){
+              const pct=Math.round((received/total)*100);
+              dlBar.style.width=pct+'%';
+              dlPct.textContent=pct+'%';
+            }
+          }
+          const blob=new Blob(chunks,{type:'video/mp4'});
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a');
+          a.href=url;a.download='reelforge-video.mp4';a.click();
+          URL.revokeObjectURL(url);
+          dlBtn.textContent='✅ Downloaded!';
+          dlPct.textContent='100%';
+          dlBar.style.width='100%';
+        }catch(e){
+          dlBtn.disabled=false;
+          dlBtn.textContent='⬇️ Download Video';
+          dlProgress.style.display='none';
+        }
+      });
       return;
     }
     if(data.state==='failed'){
