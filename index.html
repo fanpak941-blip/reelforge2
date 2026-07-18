@@ -373,6 +373,15 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
   .cp-left{border-right:none;border-bottom:1px solid var(--border);}
   .hero-stats{grid-template-columns:repeat(3,1fr);}
 }
+/* AUTH GATE */
+.auth-gated{display:none;}
+.auth-gated.visible{display:block;}
+/* LOGIN WALL */
+.login-wall{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;background:linear-gradient(160deg,#F0F5FF 0%,#fff 100%);border:1.5px dashed var(--border);border-radius:16px;margin-top:40px;}
+.login-wall-icon{font-size:48px;margin-bottom:16px;}
+.login-wall h3{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.login-wall p{font-size:15px;color:var(--body);margin-bottom:24px;max-width:400px;}
+.login-wall .lw-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 </style>
 </head>
 <body>
@@ -601,6 +610,19 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 
 <!-- CREATE PANEL -->
 <section class="section" id="create">
+  <!-- LOGIN WALL (shown when not logged in) -->
+  <div id="createLoginWall" class="wrap" style="display:none;">
+    <div class="login-wall">
+      <div class="login-wall-icon">🔒</div>
+      <h3>Login to Create Videos</h3>
+      <p>Sign in or create a free account to access the AI video generator, script writer, and all platform tools.</p>
+      <div class="lw-btns">
+        <button onclick="openAuthModal('signup')" class="btn-blue">Start Free — Sign Up</button>
+        <button onclick="openAuthModal('login')" class="btn-outline">Login</button>
+      </div>
+    </div>
+  </div>
+  <div id="createContent">
   <div class="wrap">
     <div class="tag">Create Now</div>
     <div class="sec-title">Generate Your Video</div>
@@ -733,7 +755,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 </section>
 
 <!-- SEO SECTION -->
-<section class="section" id="seo">
+<section class="section auth-section" id="seo">
   <div class="wrap">
     <div class="tag">YouTube Growth</div>
     <div class="sec-title">Built-In SEO & Viral Keyword Engine</div>
@@ -770,7 +792,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 </section>
 
 <!-- FEATURES -->
-<section class="section">
+<section class="section auth-section" id="features">
   <div class="wrap">
     <div class="tag">Platform Capabilities</div>
     <div class="sec-title">Everything You Need to Dominate YouTube</div>
@@ -1511,6 +1533,18 @@ async function submitAuth() {
   btn.textContent = authMode === 'login' ? 'Login' : 'Create Free Account';
 }
 
+function showAuthSections(show) {
+  // Create panel
+  var createContent = document.getElementById('createContent');
+  var createWall = document.getElementById('createLoginWall');
+  if (createContent) createContent.style.display = show ? 'block' : 'none';
+  if (createWall) createWall.style.display = show ? 'none' : 'block';
+  // SEO + Features sections
+  document.querySelectorAll('.auth-section').forEach(function(sec){
+    sec.style.display = show ? 'block' : 'none';
+  });
+}
+
 function updateUserUI(user) {
   document.getElementById('loginNavBtn').style.display = 'none';
   document.getElementById('signupNavBtn').style.display = 'none';
@@ -1523,6 +1557,7 @@ function updateUserUI(user) {
   if (user.plan === 'owner') {
     document.getElementById('ownerPill').style.display = 'inline-block';
   }
+  showAuthSections(true);
 }
 
 function logout() {
@@ -1532,6 +1567,7 @@ function logout() {
   document.getElementById('signupNavBtn').style.display = 'inline-block';
   document.getElementById('userInfo').style.display = 'none';
   document.getElementById('ownerPill').style.display = 'none';
+  showAuthSections(false);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -1562,6 +1598,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const savedUser = localStorage.getItem('rf_user');
   if (savedToken && savedUser) {
     updateUserUI(JSON.parse(savedUser));
+  } else {
+    // Not logged in — hide gated sections, show login wall
+    showAuthSections(false);
   }
 });
 </script>
