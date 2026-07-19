@@ -374,6 +374,20 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
   .hero-stats{grid-template-columns:repeat(3,1fr);}
 }
 
+
+/* UPGRADE BANNER */
+.upgrade-banner{background:linear-gradient(135deg,#1A56DB,#7C3AED);color:#fff;border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px;flex-wrap:wrap;}
+.upgrade-banner h4{font-size:16px;font-weight:700;margin-bottom:4px;}
+.upgrade-banner p{font-size:13px;opacity:.85;}
+.upgrade-banner .btn-upgrade{background:#fff;color:#1A56DB;font-weight:700;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;white-space:nowrap;}
+.upgrade-banner .btn-upgrade:hover{background:#F0F5FF;}
+.plan-badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;margin-left:8px;}
+.plan-free{background:#F1F5F9;color:#64748B;}
+.plan-starter{background:#DBEAFE;color:#1D4ED8;}
+.plan-pro{background:#F3E8FF;color:#7C3AED;}
+.plan-owner{background:#D1FAE5;color:#065F46;}
+.videos-left{font-size:13px;color:var(--muted);margin-bottom:16px;}
+
 /* DASHBOARD */
 .dashboard-section{display:none;padding:80px 0;border-top:1px solid var(--border);}
 .dashboard-section.visible{display:block;}
@@ -405,6 +419,9 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 .login-wall p{font-size:15px;color:var(--body);margin-bottom:24px;max-width:400px;}
 .login-wall .lw-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 </style>
+
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -1115,6 +1132,14 @@ async function sendContactForm() {
     <div class="tag">My Studio</div>
     <div class="sec-title">My Videos</div>
     <p class="sec-sub">All your generated videos in one place. Download or delete anytime.</p>
+    <div id="upgradeBanner" style="display:none;" class="upgrade-banner">
+      <div>
+        <h4>⚡ Upgrade to Starter — $1/month</h4>
+        <p>You're on the free plan. Upgrade for more videos and premium features.</p>
+      </div>
+      <button class="btn-upgrade" onclick="startUpgrade()">Upgrade Now →</button>
+    </div>
+    <p class="videos-left" id="videosLeft"></p>
     <p class="videos-counter" id="videosCounter"></p>
     <div class="video-grid" id="videoGrid">
       <div class="dashboard-empty">
@@ -1600,6 +1625,7 @@ function updateUserUI(user) {
   }
   showAuthSections(true);
   document.getElementById('dashboardNavLink').style.display = 'inline';
+  updatePlanUI(user);
   loadMyVideos();
 }
 
@@ -1615,6 +1641,104 @@ function logout() {
   document.getElementById('videoGrid').innerHTML = '';
 }
 
+
+
+// STRIPE UPGRADE
+async function startUpgrade() {
+  const token = localStorage.getItem('rf_token');
+  if (!token) { openAuthModal('login'); return; }
+  try {
+    const btn = document.querySelector('.btn-upgrade');
+    if (btn) { btn.textContent = 'Loading...'; btn.disabled = true; }
+    const res = await fetch(`${API_BASE}/api/stripe/create-checkout`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert(data.error || 'Failed to start checkout.');
+      if (btn) { btn.textContent = 'Upgrade Now →'; btn.disabled = false; }
+    }
+  } catch(e) {
+    alert('Something went wrong. Please try again.');
+  }
+}
+
+async function openBillingPortal() {
+  const token = localStorage.getItem('rf_token');
+  try {
+    const res = await fetch(`${API_BASE}/api/stripe/portal`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  } catch(e) {
+    alert('Failed to open billing portal.');
+  }
+}
+
+function updatePlanUI(user) {
+  const plan = user.plan || 'free';
+  const limit = plan === 'pro' ? 30 : plan === 'owner' ? Infinity : 3;
+  const used = user.videosGenerated || 0;
+  const remaining = plan === 'owner' ? '∞' : Math.max(0, limit - used);
+
+  // Show/hide upgrade banner
+  const banner = document.getElementById('upgradeBanner');
+  if (banner) banner.style.display = (plan === 'free') ? 'flex' : 'none';
+
+  // Videos left counter
+  const leftEl = document.getElementById('videosLeft');
+  if (leftEl) {
+    if (plan === 'owner') {
+      leftEl.textContent = '👑 Owner — Unlimited videos';
+    } else {
+      leftEl.innerHTML = `Plan: <strong>${plan.charAt(0).toUpperCase()+plan.slice(1)}</strong> &nbsp;·&nbsp; ${remaining} videos remaining this month`;
+    }
+  }
+
+  // Plan badge in nav
+  const nameEl = document.getElementById('userName');
+  if (nameEl) {
+    const badgeClass = `plan-${plan}`;
+    const existing = nameEl.querySelector('.plan-badge');
+    if (existing) existing.remove();
+    const badge = document.createElement('span');
+    badge.className = `plan-badge ${badgeClass}`;
+    badge.textContent = plan;
+    nameEl.appendChild(badge);
+  }
+}
+
+// Check if redirected back from Stripe checkout
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('upgraded') === 'true') {
+    // Refresh user data to get new plan
+    const token = localStorage.getItem('rf_token');
+    if (token) {
+      setTimeout(() => {
+        fetch(AUTH_API + '/me', { headers: { Authorization: 'Bearer ' + token } })
+          .then(r => r.json())
+          .then(data => {
+            if (data.user) {
+              localStorage.setItem('rf_user', JSON.stringify(data.user));
+              updateUserUI(data.user);
+              updatePlanUI(data.user);
+              alert('🎉 Welcome to Starter! Your plan has been upgraded.');
+            }
+          });
+      }, 2000); // wait 2s for webhook to process
+    }
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+  if (params.get('upgraded') === 'false') {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+});
 
 // DASHBOARD — load user videos
 async function loadMyVideos() {
