@@ -1690,9 +1690,15 @@ window.addEventListener('DOMContentLoaded', () => {
       .then(r => r.json())
       .then(data => {
         if (data.user) {
+          // Always save fresh user data (plan may have changed)
           localStorage.setItem('rf_user', JSON.stringify(data.user));
           updateUserUI(data.user);
+          loadMyVideos();
         }
+      })
+      .catch(() => {
+        // Token invalid — logout
+        logout();
       });
     window.history.replaceState({}, '', '/');
   }
@@ -1707,6 +1713,16 @@ window.addEventListener('DOMContentLoaded', () => {
   const savedUser = localStorage.getItem('rf_user');
   if (savedToken && savedUser) {
     updateUserUI(JSON.parse(savedUser));
+    // Refresh user data from server on every page load
+    fetch(AUTH_API + '/me', { headers: { Authorization: 'Bearer ' + savedToken } })
+      .then(r => r.json())
+      .then(data => {
+        if (data.user) {
+          localStorage.setItem('rf_user', JSON.stringify(data.user));
+          updateUserUI(data.user);
+        }
+      })
+      .catch(() => logout());
     loadMyVideos();
   } else {
     // Not logged in — hide gated sections, show login wall
