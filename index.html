@@ -19,15 +19,8 @@
 <meta name="twitter:image" content="https://reelforge2.vercel.app/og-image.jpg">
 <link rel="canonical" href="https://reelforge2.vercel.app/">
 
-<!-- Paddle Checkout -->
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script>
-  window.addEventListener('DOMContentLoaded', function(){
-    Paddle.Initialize({
-      token: 'live_27834e558304ac7a12a7991db76' // client-side token from Paddle Dashboard
-    });
-  });
-</script>
+
+
 <link rel="icon" type="image/png" href="/favicon.png">
 
 <!-- Structured Data: helps Google show rich results (star ratings, price, etc.) -->
@@ -955,7 +948,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
           <li>1 thumbnail per video</li>
           <li>Basic YouTube SEO package</li>
         </ul>
-        <button class="btn-outline" onclick="openCheckout('pri_01kxd7p30z7qmzsx59js91m450')" style="width:100%;">Start Free 7-Day Trial</button>
+        <button class="btn-outline" onclick="startUpgrade()" style="width:100%;">Start Free 7-Day Trial</button>
       </div>
       <div class="price-c pop">
         <div class="pop-label">Most Popular</div>
@@ -974,7 +967,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
           <li>Full YouTube SEO package + 30 tags</li>
           <li>Viral keyword suggestions</li>
         </ul>
-        <button class="btn-blue" onclick="openCheckout('pri_01kxd7w0spq1q71pjm50pxda48')" style="width:100%;">Start Professional</button>
+        <button class="btn-blue" onclick="startUpgrade()" style="width:100%;">Start Professional</button>
       </div>
       <div class="price-c">
         <div class="price-name">Enterprise</div>
@@ -1308,17 +1301,7 @@ async function sendContactForm() {
 // Backend deployed on Railway
 const API_BASE = "https://reelforge-backendzip-production.up.railway.app";
 
-// Opens Paddle's secure checkout overlay for the given price
-function openCheckout(priceId){
-  Paddle.Checkout.open({
-    items: [{ priceId: priceId, quantity: 1 }],
-    settings: {
-      displayMode: 'overlay',
-      theme: 'light',
-      successUrl: 'https://reelforge2.vercel.app/success.html'
-    }
-  });
-}
+
 
 document.querySelectorAll('.chips').forEach(set=>{
   set.addEventListener('click',e=>{
