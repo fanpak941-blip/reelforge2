@@ -408,6 +408,21 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 .plan-owner{background:#D1FAE5;color:#065F46;}
 .videos-left{font-size:13px;color:var(--muted);margin-bottom:16px;}
 
+
+/* AVATAR PANEL */
+.avatar-panel{display:none;margin-top:16px;padding:16px;border:1.5px solid var(--border);border-radius:10px;background:#F8FAFC;}
+.avatar-panel.active{display:block;}
+.presenter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;}
+.presenter-card{border:2px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s;}
+.presenter-card:hover{border-color:var(--blue);}
+.presenter-card.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.15);}
+.presenter-card img{width:100%;height:80px;object-fit:cover;}
+.presenter-card p{font-size:11px;font-weight:700;text-align:center;padding:4px;color:var(--dark);}
+.avatar-upload-box{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-top:10px;transition:.2s;}
+.avatar-upload-box:hover{border-color:var(--blue);background:#EFF6FF;}
+.avatar-upload-box p{font-size:13px;color:var(--muted);margin-top:6px;}
+.avatar-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;border:3px solid var(--blue);}
+
 /* DASHBOARD */
 .dashboard-section{display:none;padding:80px 0;border-top:1px solid var(--border);}
 .dashboard-section.visible{display:block;}
@@ -760,11 +775,56 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
             <label class="fl">04 — Visual Style</label>
             <div class="chips" id="styleChips">
               <div class="chip sel" data-value="stock">Stock Footage</div>
-              <div class="chip" data-value="avatar">AI Avatar (Phase 2)</div>
+              <div class="chip" data-value="avatar">🤖 AI Avatar</div>
               <div class="chip" data-value="image-to-video">Image to Video</div>
               <div class="chip" data-value="mixed">Mixed</div>
             </div>
           </div>
+
+          <!-- AVATAR PANEL — shown when AI Avatar style selected -->
+          <div class="avatar-panel" id="avatarPanel">
+            <label class="fl" style="margin-bottom:8px;">Choose Presenter</label>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <button type="button" id="useDefaultAvatar" onclick="switchAvatarMode('default')" style="flex:1;padding:8px;border:2px solid var(--blue);border-radius:8px;background:#EFF6FF;color:var(--blue);font-weight:700;font-size:12px;cursor:pointer;">AI Presenter</button>
+              <button type="button" id="useCustomAvatar" onclick="switchAvatarMode('custom')" style="flex:1;padding:8px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--dark);font-weight:700;font-size:12px;cursor:pointer;">My Photo</button>
+            </div>
+
+            <!-- Default presenters -->
+            <div id="defaultPresenters">
+              <div class="presenter-grid">
+                <div class="presenter-card sel" data-img="https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg" onclick="selectPresenter(this)">
+                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg" alt="Amy">
+                  <p>Amy</p>
+                </div>
+                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Daniel_m/image.jpeg" onclick="selectPresenter(this)">
+                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Daniel_m/image.jpeg" alt="Daniel">
+                  <p>Daniel</p>
+                </div>
+                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Anna_f/image.jpeg" onclick="selectPresenter(this)">
+                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Anna_f/image.jpeg" alt="Anna">
+                  <p>Anna</p>
+                </div>
+                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Michael_m/image.jpeg" onclick="selectPresenter(this)">
+                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Michael_m/image.jpeg" alt="Michael">
+                  <p>Michael</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom photo upload -->
+            <div id="customAvatarUpload" style="display:none;">
+              <div class="avatar-upload-box" onclick="document.getElementById('avatarPhotoInput').click()">
+                <img id="avatarPreviewImg" class="avatar-preview" src="" alt="" style="display:none;">
+                <div id="avatarUploadPlaceholder">
+                  <div style="font-size:32px;">📸</div>
+                  <p>Click to upload your photo</p>
+                  <p style="font-size:11px;">JPG or PNG, max 10MB</p>
+                </div>
+              </div>
+              <input type="file" id="avatarPhotoInput" accept="image/jpeg,image/png" style="display:none;" onchange="previewAvatarPhoto(this)">
+            </div>
+          </div>
+
           <div>
             <label class="fl">05 — Frame Size</label>
             <div class="chips" id="aspectChips">
@@ -1791,6 +1851,89 @@ window.addEventListener('DOMContentLoaded', () => {
     window.history.replaceState({}, '', window.location.pathname);
   }
 });
+
+
+// AVATAR FUNCTIONS
+let selectedPresenterImg = 'https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg';
+let avatarMode = 'default'; // 'default' or 'custom'
+let customPhotoFile = null;
+
+function switchAvatarMode(mode) {
+  avatarMode = mode;
+  document.getElementById('defaultPresenters').style.display = mode === 'default' ? 'block' : 'none';
+  document.getElementById('customAvatarUpload').style.display = mode === 'custom' ? 'block' : 'none';
+  document.getElementById('useDefaultAvatar').style.borderColor = mode === 'default' ? 'var(--blue)' : 'var(--border)';
+  document.getElementById('useDefaultAvatar').style.background = mode === 'default' ? '#EFF6FF' : '#fff';
+  document.getElementById('useCustomAvatar').style.borderColor = mode === 'custom' ? 'var(--blue)' : 'var(--border)';
+  document.getElementById('useCustomAvatar').style.background = mode === 'custom' ? '#EFF6FF' : '#fff';
+}
+
+function selectPresenter(card) {
+  document.querySelectorAll('.presenter-card').forEach(c => c.classList.remove('sel'));
+  card.classList.add('sel');
+  selectedPresenterImg = card.dataset.img;
+}
+
+function previewAvatarPhoto(input) {
+  if (!input.files[0]) return;
+  customPhotoFile = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('avatarPreviewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('avatarUploadPlaceholder').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// Show/hide avatar panel when style chip changes
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#styleChips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const val = chip.dataset.value;
+      const panel = document.getElementById('avatarPanel');
+      if (panel) panel.classList.toggle('active', val === 'avatar');
+    });
+  });
+});
+
+// Generate avatar video using D-ID
+async function generateAvatarVideo(script, language) {
+  const token = localStorage.getItem('rf_token');
+  const fd = new FormData();
+  fd.append('script', script);
+  fd.append('language', language || 'English');
+
+  if (avatarMode === 'custom' && customPhotoFile) {
+    fd.append('photo', customPhotoFile);
+  } else {
+    fd.append('presenterImage', selectedPresenterImg);
+  }
+
+  // Start avatar generation
+  const res = await fetch(`${API_BASE}/api/avatar/generate`, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
+    body: fd
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Avatar generation failed.');
+
+  const talkId = data.talkId;
+
+  // Poll for result
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 3000));
+    const statusRes = await fetch(`${API_BASE}/api/avatar/status/${talkId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const statusData = await statusRes.json();
+    if (statusData.status === 'done') return statusData.videoUrl;
+    if (statusData.status === 'error') throw new Error('Avatar rendering failed.');
+  }
+  throw new Error('Avatar timed out.');
+}
 
 // DASHBOARD — load user videos
 async function loadMyVideos() {
