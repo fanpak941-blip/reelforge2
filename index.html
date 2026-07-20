@@ -959,7 +959,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
     <div class="tag">Simple Pricing</div>
     <div class="sec-title">Plans for every creator</div>
     <p class="sec-sub">Start free. Upgrade when you need more. Cancel anytime — no questions asked.</p>
-    <div class="pricing-grid">
+    <div class="pricing-grid" style="grid-template-columns:repeat(4,1fr);">
 
       <!-- FREE -->
       <div class="price-c" id="plan-card-free">
@@ -983,47 +983,72 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
       </div>
 
       <!-- STARTER -->
-      <div class="price-c pop" id="plan-card-starter">
-        <div class="price-badge">Most Popular</div>
+      <div class="price-c" id="plan-card-starter">
         <div class="price-top">
           <div class="price-plan-name">Starter</div>
           <div class="price-main"><span class="amt">$1</span><span class="per">/mo</span></div>
-          <div class="price-sub">First month — cancel anytime</div>
+          <div class="price-sub">Cancel anytime</div>
         </div>
         <div class="price-divider"></div>
         <ul class="price-features">
-          <li>3 videos per month</li>
+          <li>10 videos per month</li>
           <li>Stock footage + image-to-video</li>
           <li>Premium AI voiceover</li>
           <li>Styled captions</li>
           <li>1080p export</li>
           <li>YouTube SEO package</li>
-          <li>Priority support</li>
         </ul>
         <div class="price-cta">
-          <button class="btn-plan-starter" onclick="startUpgrade()">Upgrade to Starter</button>
+          <button class="btn-plan-starter" onclick="startUpgrade('starter')">Upgrade to Starter</button>
           <div class="current-plan-tag" id="current-starter" style="display:none;">✓ Your current plan</div>
         </div>
       </div>
 
-      <!-- ENTERPRISE -->
-      <div class="price-c" id="plan-card-enterprise">
+      <!-- PRO -->
+      <div class="price-c pop" id="plan-card-pro">
+        <div class="price-badge">Most Popular</div>
         <div class="price-top">
-          <div class="price-plan-name">Enterprise</div>
-          <div class="price-main"><span class="amt" style="font-size:32px;">Custom</span></div>
-          <div class="price-sub">Volume pricing available</div>
+          <div class="price-plan-name">Pro</div>
+          <div class="price-main"><span class="amt">$17</span><span class="per">/mo</span></div>
+          <div class="price-sub">Cancel anytime</div>
         </div>
         <div class="price-divider"></div>
         <ul class="price-features">
-          <li>Unlimited everything</li>
+          <li>50 videos per month</li>
+          <li>All visual modes</li>
+          <li>Premium AI voiceover</li>
+          <li>Advanced captions + logo</li>
+          <li>4K export</li>
+          <li>YouTube SEO + 30 tags</li>
+          <li>Priority rendering</li>
+          <li>Priority support</li>
+        </ul>
+        <div class="price-cta">
+          <button class="btn-plan-pro" onclick="startUpgrade('pro')">Upgrade to Pro</button>
+          <div class="current-plan-tag" id="current-pro" style="display:none;">✓ Your current plan</div>
+        </div>
+      </div>
+
+      <!-- MAX -->
+      <div class="price-c" id="plan-card-max">
+        <div class="price-top">
+          <div class="price-plan-name">Max</div>
+          <div class="price-main"><span class="amt">$100</span><span class="per">/mo</span></div>
+          <div class="price-sub">For agencies & teams</div>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Unlimited videos</li>
           <li>White-label platform</li>
           <li>Custom AI avatar</li>
           <li>API access</li>
           <li>Dedicated account manager</li>
           <li>SLA & uptime guarantee</li>
+          <li>Custom contract & invoicing</li>
         </ul>
         <div class="price-cta">
-          <a class="btn-plan-enterprise" href="#contact">Contact sales</a>
+          <button class="btn-plan-pro" style="background:linear-gradient(135deg,#0F172A,#1E293B);" onclick="startUpgrade('max')">Upgrade to Max</button>
+          <div class="current-plan-tag" id="current-max" style="display:none;">✓ Your current plan</div>
         </div>
       </div>
 
@@ -1670,7 +1695,7 @@ function logout() {
 
 function highlightCurrentPlan(plan) {
   // Hide all current plan tags
-  ['free','starter','pro','enterprise'].forEach(p => {
+  ['free','starter','pro','max','owner'].forEach(p => {
     const el = document.getElementById('current-' + p);
     if (el) el.style.display = 'none';
   });
@@ -1688,7 +1713,8 @@ function highlightCurrentPlan(plan) {
 }
 
 // STRIPE UPGRADE
-async function startUpgrade() {
+async function startUpgrade(plan) {
+  plan = plan || 'starter';
   const token = localStorage.getItem('rf_token');
   if (!token) { openAuthModal('login'); return; }
   try {
@@ -1696,7 +1722,8 @@ async function startUpgrade() {
     if (btn) { btn.textContent = 'Loading...'; btn.disabled = true; }
     const res = await fetch(`${API_BASE}/api/stripe/create-checkout`, {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token }
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan })
     });
     const data = await res.json();
     if (data.url) {
@@ -1726,7 +1753,7 @@ async function openBillingPortal() {
 
 function updatePlanUI(user) {
   const plan = user.plan || 'free';
-  const limit = plan === 'pro' ? 30 : plan === 'owner' ? Infinity : 3;
+  const limit = plan === 'pro' ? 50 : plan === 'max' || plan === 'owner' ? Infinity : plan === 'starter' ? 10 : 3;
   const used = user.videosGenerated || 0;
   const remaining = plan === 'owner' ? '∞' : Math.max(0, limit - used);
 
