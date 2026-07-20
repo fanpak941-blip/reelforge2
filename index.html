@@ -409,6 +409,25 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 .videos-left{font-size:13px;color:var(--muted);margin-bottom:16px;}
 
 
+
+/* CAPTION VISUAL PICKER */
+.caption-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.caption-card{border:2px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:#000;height:64px;display:flex;align-items:center;justify-content:center;position:relative;}
+.caption-card:hover{border-color:var(--blue);}
+.caption-card.sel{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,86,219,.2);}
+.caption-card span{font-size:11px;font-weight:800;text-align:center;padding:0 6px;line-height:1.3;}
+.cc-classic{color:#fff;text-shadow:1px 1px 2px #000;}
+.cc-yellow{color:#FFE600;text-shadow:2px 2px 0 #000;font-style:italic;}
+.cc-blackbox{background:#000;color:#fff;padding:2px 6px;}
+.cc-neon{color:#00FF41;text-shadow:0 0 8px #00FF41,0 0 2px #fff;}
+.cc-bold_red{color:#FF2D2D;font-size:13px;font-weight:900;text-shadow:2px 2px 0 #000;}
+.cc-gradient{background:linear-gradient(90deg,#1A56DB,#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cc-pink{background:#FF2D78;color:#fff;padding:2px 8px;border-radius:4px;}
+.cc-large{color:#fff;font-size:14px;font-weight:900;letter-spacing:-0.5px;}
+.cc-subtitle{color:#fff;font-size:10px;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:3px;}
+.cc-trending{color:#fff;font-size:12px;font-weight:900;text-shadow:2px 2px 0 #FF2D2D;}
+.caption-label{position:absolute;bottom:3px;right:4px;font-size:9px;color:rgba(255,255,255,.6);}
+
 /* AVATAR PANEL */
 .avatar-panel{display:none;margin-top:16px;padding:16px;border:1.5px solid var(--border);border-radius:10px;background:#F8FAFC;}
 .avatar-panel.active{display:block;}
@@ -836,17 +855,61 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
           </div>
           <div>
             <label class="fl">06 — Caption Style</label>
-            <div class="chips" id="captionChips" style="flex-wrap:wrap;">
-              <div class="chip sel" data-value="classic_white">Classic White</div>
-              <div class="chip" data-value="yellow_pop">Yellow Pop</div>
-              <div class="chip" data-value="black_box">Black Box</div>
-              <div class="chip" data-value="neon_green">Neon Green</div>
-              <div class="chip" data-value="minimal_top">Minimal Top</div>
-              <div class="chip" data-value="bold_red">Bold Red</div>
-              <div class="chip" data-value="gradient_blue">Gradient Blue</div>
-              <div class="chip" data-value="pink_highlight">Pink Highlight</div>
-              <div class="chip" data-value="large_center">Large Center</div>
-              <div class="chip" data-value="subtitle_classic">Subtitle Classic</div>
+            <div class="caption-grid" id="captionChips">
+              <div class="caption-card sel" data-value="classic_white" onclick="selectCaption(this)" title="Classic White">
+                <span class="cc-classic">THE QUICK<br>BROWN FOX</span>
+                <span class="caption-label">Classic</span>
+              </div>
+              <div class="caption-card" data-value="yellow_pop" onclick="selectCaption(this)" title="Yellow Pop">
+                <span class="cc-yellow">THE QUICK</span>
+                <span class="caption-label">Yellow Pop</span>
+              </div>
+              <div class="caption-card" data-value="black_box" onclick="selectCaption(this)" title="Black Box">
+                <span class="cc-blackbox">OVER</span>
+                <span class="caption-label">Black Box</span>
+              </div>
+              <div class="caption-card" data-value="neon_green" onclick="selectCaption(this)" title="Neon Green">
+                <span class="cc-neon">quick</span>
+                <span class="caption-label">Neon</span>
+              </div>
+              <div class="caption-card" data-value="bold_red" onclick="selectCaption(this)" title="Bold Red">
+                <span class="cc-bold_red">THE QUICK</span>
+                <span class="caption-label">Bold Red</span>
+              </div>
+              <div class="caption-card" data-value="pink_highlight" onclick="selectCaption(this)" title="Pink Highlight">
+                <span class="cc-pink">The quick</span>
+                <span class="caption-label">Pink</span>
+              </div>
+              <div class="caption-card" data-value="gradient_blue" onclick="selectCaption(this)" title="Gradient Blue">
+                <span class="cc-gradient" style="font-size:12px;font-weight:900;">THE QUICK</span>
+                <span class="caption-label">Gradient</span>
+              </div>
+              <div class="caption-card" data-value="large_center" onclick="selectCaption(this)" title="Large Center">
+                <span class="cc-large">OVER</span>
+                <span class="caption-label">Large</span>
+              </div>
+              <div class="caption-card" data-value="subtitle_classic" onclick="selectCaption(this)" title="Subtitle">
+                <span class="cc-subtitle">The quick brown fox</span>
+                <span class="caption-label">Subtitle</span>
+              </div>
+            </div>
+
+            <!-- Logo upload -->
+            <div style="margin-top:12px;">
+              <label class="fl" style="margin-bottom:6px;">Logo Watermark (optional)</label>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div id="logoUploadBox" onclick="document.getElementById('logoInput').click()" style="border:2px dashed var(--border);border-radius:8px;padding:10px 16px;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;flex:1;transition:.2s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <span id="logoUploadText">📎 Upload Logo (PNG)</span>
+                  <img id="logoPreview" src="" alt="" style="display:none;height:28px;border-radius:4px;">
+                </div>
+                <select id="logoPosition" style="padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;">
+                  <option value="top-right">Top Right</option>
+                  <option value="top-left">Top Left</option>
+                  <option value="bottom-right">Bottom Right</option>
+                  <option value="bottom-left">Bottom Left</option>
+                </select>
+              </div>
+              <input type="file" id="logoInput" accept="image/png,image/jpeg" style="display:none;" onchange="previewLogo(this)">
             </div>
           </div>
           <div>
@@ -1509,7 +1572,7 @@ btn.addEventListener('click',async()=>{
     gender=voiceKey;
   }
   const musicStyle=document.getElementById('musicSelect').value;
-  const captionStyle=getChip('captionChips');
+  const captionStyle=getSelectedCaption();
   const style=getChip('styleChips');
   const aspectRatio=getChip('aspectChips');
   if(!scriptOrTopic){alert('Please enter a script or topic first.');return;}
@@ -1852,6 +1915,31 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+
+// CAPTION SELECTION
+function selectCaption(card) {
+  document.querySelectorAll('.caption-card').forEach(c => c.classList.remove('sel'));
+  card.classList.add('sel');
+}
+function getSelectedCaption() {
+  const sel = document.querySelector('.caption-card.sel');
+  return sel ? sel.dataset.value : 'classic_white';
+}
+
+// LOGO UPLOAD
+let logoFile = null;
+function previewLogo(input) {
+  if (!input.files[0]) return;
+  logoFile = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('logoPreview').src = e.target.result;
+    document.getElementById('logoPreview').style.display = 'block';
+    document.getElementById('logoUploadText').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 
 // AVATAR FUNCTIONS
 let selectedPresenterImg = 'https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg';
