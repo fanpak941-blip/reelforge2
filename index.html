@@ -280,8 +280,35 @@ select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10p
 .ent-card h4{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;}
 .ent-card p{font-size:13px;color:rgba(255,255,255,.55);}
 
-/* PRICING */
-.pricing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:40px;}
+/* PRICING — Claude.ai style */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.price-c{border:1.5px solid var(--border);border-radius:16px;padding:28px 24px;background:#fff;position:relative;transition:.2s;display:flex;flex-direction:column;}
+.price-c:hover{box-shadow:0 8px 32px rgba(0,0,0,.08);}
+.price-c.pop{border-color:#1A56DB;box-shadow:0 0 0 3px rgba(26,86,219,.10);}
+.price-top{margin-bottom:24px;}
+.price-plan-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.price-c.pop .price-plan-name{color:#1A56DB;}
+.price-main{display:flex;align-items:flex-end;gap:4px;margin-bottom:6px;}
+.price-main .amt{font-size:42px;font-weight:800;color:var(--dark);line-height:1;}
+.price-main .per{font-size:14px;color:var(--muted);margin-bottom:6px;}
+.price-sub{font-size:13px;color:var(--muted);}
+.price-divider{height:1px;background:var(--border);margin:20px 0;}
+.price-features{list-style:none;padding:0;margin:0 0 24px;flex:1;}
+.price-features li{font-size:14px;color:var(--body);padding:7px 0;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F8FAFC;}
+.price-features li:last-child{border-bottom:none;}
+.price-features li::before{content:'✓';color:#1A56DB;font-weight:800;font-size:13px;flex-shrink:0;}
+.price-c.pop .price-features li::before{color:#1A56DB;}
+.price-badge{display:inline-block;background:#EFF6FF;color:#1D4ED8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:12px;}
+.price-cta{margin-top:auto;}
+.price-cta button,.price-cta a{width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;display:block;text-align:center;text-decoration:none;}
+.btn-plan-free{background:#F1F5F9;color:var(--dark);}
+.btn-plan-free:hover{background:#E2E8F0;}
+.btn-plan-starter{background:#1A56DB;color:#fff;}
+.btn-plan-starter:hover{background:#1647C5;}
+.btn-plan-pro{background:linear-gradient(135deg,#1A56DB,#7C3AED);color:#fff;}
+.btn-plan-pro:hover{opacity:.92;}
+.btn-plan-enterprise{background:var(--dark);color:#fff;}
+.current-plan-tag{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;font-weight:600;}
 .price-c{border:1.5px solid var(--border);border-radius:14px;padding:28px;background:#fff;display:flex;flex-direction:column;}
 .price-c.pop{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-l);}
 .pop-label{background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em;}
@@ -929,63 +956,77 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 <!-- PRICING -->
 <section class="section" id="pricing">
   <div class="wrap">
-    <div class="tag">Transparent Pricing</div>
-    <div class="sec-title">Start Free. Scale When Ready.</div>
-    <p class="sec-sub">No hidden fees. No contracts. Cancel anytime. Every plan includes thumbnail generation and YouTube SEO package.</p>
-    <div class="owner-note" style="margin-top:24px;">✅ You are the platform owner — your account has unlimited access at no cost. The plans below apply to your paying subscribers.</div>
+    <div class="tag">Simple Pricing</div>
+    <div class="sec-title">Plans for every creator</div>
+    <p class="sec-sub">Start free. Upgrade when you need more. Cancel anytime — no questions asked.</p>
     <div class="pricing-grid">
-      <div class="price-c">
-        <div class="trial-badge">✨ 7-Day Free Trial</div>
-        <div class="price-name">Starter — Month 1</div>
-        <div class="price-amt">$1<sup>/mo</sup></div>
-        <div class="price-period">First month only, after free trial</div>
-        <div class="price-desc">Perfect for creators testing the platform risk-free.</div>
-        <ul>
-          <li>Up to 3 videos per month</li>
-          <li>Videos up to 5 minutes</li>
-          <li>Stock footage & image-to-video</li>
-          <li>English, German & Spanish voices</li>
-          <li>1 thumbnail per video</li>
-          <li>Basic YouTube SEO package</li>
+
+      <!-- FREE -->
+      <div class="price-c" id="plan-card-free">
+        <div class="price-top">
+          <div class="price-plan-name">Free</div>
+          <div class="price-main"><span class="amt">$0</span><span class="per">/mo</span></div>
+          <div class="price-sub">No credit card required</div>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>3 videos per month</li>
+          <li>Stock footage visuals</li>
+          <li>AI voiceover</li>
+          <li>Basic captions</li>
+          <li>720p export</li>
         </ul>
-        <button class="btn-outline" onclick="startUpgrade()" style="width:100%;">Start Free 7-Day Trial</button>
+        <div class="price-cta">
+          <button class="btn-plan-free" onclick="openAuthModal('signup')">Get started free</button>
+          <div class="current-plan-tag" id="current-free" style="display:none;">✓ Your current plan</div>
+        </div>
       </div>
-      <div class="price-c pop">
-        <div class="pop-label">Most Popular</div>
-        <div class="price-name">Professional — Month 2+</div>
-        <div class="price-amt">$10<sup>/mo</sup></div>
-        <div class="price-period">Per month, cancel anytime</div>
-        <div class="price-desc">Full access for serious creators ready to grow.</div>
-        <ul>
-          <li>Unlimited videos per month</li>
-          <li>Videos up to 30 minutes</li>
-          <li>AI Avatar + all visual modes</li>
-          <li>All supported languages</li>
-          <li>All frame sizes + re-export</li>
-          <li>3 thumbnails per video</li>
-          <li>Full in-browser video editor</li>
-          <li>Full YouTube SEO package + 30 tags</li>
-          <li>Viral keyword suggestions</li>
+
+      <!-- STARTER -->
+      <div class="price-c pop" id="plan-card-starter">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-top">
+          <div class="price-plan-name">Starter</div>
+          <div class="price-main"><span class="amt">$1</span><span class="per">/mo</span></div>
+          <div class="price-sub">First month — cancel anytime</div>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>3 videos per month</li>
+          <li>Stock footage + image-to-video</li>
+          <li>Premium AI voiceover</li>
+          <li>Styled captions</li>
+          <li>1080p export</li>
+          <li>YouTube SEO package</li>
+          <li>Priority support</li>
         </ul>
-        <button class="btn-blue" onclick="startUpgrade()" style="width:100%;">Start Professional</button>
+        <div class="price-cta">
+          <button class="btn-plan-starter" onclick="startUpgrade()">Upgrade to Starter</button>
+          <div class="current-plan-tag" id="current-starter" style="display:none;">✓ Your current plan</div>
+        </div>
       </div>
-      <div class="price-c">
-        <div class="price-name">Enterprise</div>
-        <div class="price-amt" style="font-size:32px;">Custom</div>
-        <div class="price-period">Volume pricing available</div>
-        <div class="price-desc">For agencies and brands with high-volume needs.</div>
-        <ul>
+
+      <!-- ENTERPRISE -->
+      <div class="price-c" id="plan-card-enterprise">
+        <div class="price-top">
+          <div class="price-plan-name">Enterprise</div>
+          <div class="price-main"><span class="amt" style="font-size:32px;">Custom</span></div>
+          <div class="price-sub">Volume pricing available</div>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
           <li>Unlimited everything</li>
-          <li>White-label platform option</li>
+          <li>White-label platform</li>
           <li>Custom AI avatar</li>
           <li>API access</li>
           <li>Dedicated account manager</li>
-          <li>Priority rendering queue</li>
-          <li>Custom contract & invoicing</li>
           <li>SLA & uptime guarantee</li>
         </ul>
-        <a class="btn-dark" href="#contact">Contact Sales</a>
+        <div class="price-cta">
+          <a class="btn-plan-enterprise" href="#contact">Contact sales</a>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -1626,6 +1667,26 @@ function logout() {
 
 
 
+
+function highlightCurrentPlan(plan) {
+  // Hide all current plan tags
+  ['free','starter','pro','enterprise'].forEach(p => {
+    const el = document.getElementById('current-' + p);
+    if (el) el.style.display = 'none';
+  });
+  // Show current
+  const curr = document.getElementById('current-' + plan);
+  if (curr) curr.style.display = 'block';
+  // Hide upgrade button if already on starter+
+  const starterBtn = document.querySelector('#plan-card-starter .btn-plan-starter');
+  if (starterBtn && (plan === 'starter' || plan === 'pro' || plan === 'owner')) {
+    starterBtn.textContent = plan === 'owner' ? '👑 Owner Plan' : '✓ Current Plan';
+    starterBtn.disabled = true;
+    starterBtn.style.background = '#E2E8F0';
+    starterBtn.style.color = '#64748B';
+  }
+}
+
 // STRIPE UPGRADE
 async function startUpgrade() {
   const token = localStorage.getItem('rf_token');
@@ -1683,6 +1744,7 @@ function updatePlanUI(user) {
     }
   }
 
+  highlightCurrentPlan(plan);
   // Plan badge in nav
   const nameEl = document.getElementById('userName');
   if (nameEl) {
