@@ -410,6 +410,14 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 
 
 
+
+/* VOICE PREVIEW */
+.voice-preview-btn{background:#fff;border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;white-space:nowrap;}
+.voice-preview-btn:hover{background:#EFF6FF;}
+.voice-preview-btn.playing{background:var(--blue);color:#fff;}
+.voice-select-row{display:flex;gap:8px;align-items:center;}
+.voice-select-row select{flex:1;}
+
 /* CAPTION VISUAL PICKER */
 .caption-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
 .caption-card{border:2px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:#000;height:64px;display:flex;align-items:center;justify-content:center;position:relative;}
@@ -773,21 +781,27 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
             </div>
             <div>
               <label class="fl">03 — Voice</label>
-              <select id="voiceSelect">
-                <option value="english-warm_friendly">🇺🇸 English — Warm &amp; Friendly (F)</option>
-                <option value="english-energetic_male">🇺🇸 English — Energetic (M)</option>
-                <option value="english-calm_female">🇺🇸 English — Calm (F)</option>
-                <option value="english-deep_authoritative">🇺🇸 English — Deep &amp; Authoritative (M)</option>
-                <option value="english-professional_female">🇺🇸 English — Professional (F)</option>
-                <option value="urdu-male">🇵🇰 Urdu — Male</option>
-                <option value="urdu-female">🇵🇰 Urdu — Female</option>
-                <option value="hindi-male">🇮🇳 Hindi — Male</option>
-                <option value="hindi-female">🇮🇳 Hindi — Female</option>
-                <option value="german-male">🇩🇪 German — Male</option>
-                <option value="german-female">🇩🇪 German — Female</option>
-                <option value="spanish-male">🇪🇸 Spanish — Male</option>
-                <option value="spanish-female">🇪🇸 Spanish — Female</option>
-              </select>
+              <div class="voice-select-row">
+                <select id="voiceSelect" onchange="stopVoicePreview()">
+                  <option value="english-warm_friendly">🇺🇸 English — Warm &amp; Friendly (F)</option>
+                  <option value="english-energetic_male">🇺🇸 English — Energetic (M)</option>
+                  <option value="english-calm_female">🇺🇸 English — Calm (F)</option>
+                  <option value="english-deep_authoritative">🇺🇸 English — Deep &amp; Authoritative (M)</option>
+                  <option value="english-professional_female">🇺🇸 English — Professional (F)</option>
+                  <option value="urdu-male">🇵🇰 Urdu — Male</option>
+                  <option value="urdu-female">🇵🇰 Urdu — Female</option>
+                  <option value="hindi-male">🇮🇳 Hindi — Male</option>
+                  <option value="hindi-female">🇮🇳 Hindi — Female</option>
+                  <option value="german-male">🇩🇪 German — Male</option>
+                  <option value="german-female">🇩🇪 German — Female</option>
+                  <option value="spanish-male">🇪🇸 Spanish — Male</option>
+                  <option value="spanish-female">🇪🇸 Spanish — Female</option>
+                </select>
+                <button type="button" class="voice-preview-btn" id="voicePreviewBtn" onclick="toggleVoicePreview()">
+                  ▶ Preview
+                </button>
+              </div>
+              <div id="voicePreviewStatus" style="font-size:11px;color:var(--muted);margin-top:4px;display:none;">Loading preview...</div>
             </div>
           </div>
           <div>
@@ -1916,6 +1930,122 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
+
+// VOICE PREVIEW
+let voicePreviewAudio = null;
+let voicePreviewPlaying = false;
+
+// Sample texts per language
+const VOICE_SAMPLES = {
+  'english-warm_friendly':       'Hi there! Welcome to ReelForge. I'm your warm and friendly AI presenter.',
+  'english-energetic_male':      'Let's go! ReelForge creates amazing videos in minutes. Get ready to grow!',
+  'english-calm_female':         'Hello. ReelForge helps you create professional videos effortlessly.',
+  'english-deep_authoritative':  'ReelForge. The most powerful AI video platform for creators.',
+  'english-professional_female': 'Welcome to ReelForge. Your professional AI video creation platform.',
+  'urdu-male':   'ریل فورج میں خوش آمدید۔ میں آپ کا اردو آواز ہوں۔',
+  'urdu-female': 'ریل فورج آپ کی ویڈیو بنانے کا بہترین پلیٹ فارم ہے۔',
+  'hindi-male':  'रीलफोर्ज में आपका स्वागत है। मैं आपकी हिंदी आवाज़ हूँ।',
+  'hindi-female':'रीलफोर्ज के साथ अपनी वीडियो बनाएं।',
+  'german-male': 'Willkommen bei ReelForge. Erstellen Sie professionelle Videos mit KI.',
+  'german-female':'ReelForge macht die Videoerstellung einfach und schnell.',
+  'spanish-male': 'Bienvenido a ReelForge. Crea videos increíbles con inteligencia artificial.',
+  'spanish-female':'ReelForge, tu plataforma de creación de videos con IA.',
+};
+
+async function toggleVoicePreview() {
+  if (voicePreviewPlaying) {
+    stopVoicePreview();
+    return;
+  }
+
+  const token = localStorage.getItem('rf_token');
+  if (!token) { alert('Please login first.'); return; }
+
+  const voice = document.getElementById('voiceSelect').value;
+  const btn = document.getElementById('voicePreviewBtn');
+  const status = document.getElementById('voicePreviewStatus');
+
+  btn.textContent = '⏳ Loading...';
+  btn.disabled = true;
+  status.style.display = 'block';
+  status.textContent = 'Generating voice preview...';
+
+  try {
+    const sampleText = VOICE_SAMPLES[voice] || 'Hello! This is a voice preview for ReelForge.';
+    const voiceParts = voice.split('-');
+    const language = voiceParts[0].charAt(0).toUpperCase() + voiceParts[0].slice(1);
+    const tone = voiceParts.slice(1).join('_');
+
+    const fd = new FormData();
+    fd.append('topic', sampleText);
+    fd.append('niche', 'general');
+    fd.append('wordCount', '30');
+    fd.append('language', language);
+
+    // Use TTS preview endpoint
+    const res = await fetch(`${API_BASE}/api/voice-preview`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ text: sampleText, voice, language, tone }),
+    });
+
+    if (!res.ok) throw new Error('Preview failed');
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    voicePreviewAudio = new Audio(url);
+    voicePreviewAudio.onended = () => stopVoicePreview();
+    voicePreviewAudio.play();
+
+    voicePreviewPlaying = true;
+    btn.textContent = '⏹ Stop';
+    btn.classList.add('playing');
+    btn.disabled = false;
+    status.textContent = 'Playing preview...';
+
+  } catch(e) {
+    // Fallback — use browser TTS
+    const sampleText = VOICE_SAMPLES[voice] || 'Hello! This is ReelForge AI voice.';
+    const utterance = new SpeechSynthesisUtterance(sampleText);
+
+    const voiceMap = {
+      'english': 'en-US', 'urdu': 'ur', 'hindi': 'hi',
+      'german': 'de-DE', 'spanish': 'es-ES'
+    };
+    const lang = voice.split('-')[0];
+    utterance.lang = voiceMap[lang] || 'en-US';
+    utterance.rate = 0.95;
+    utterance.pitch = voice.includes('female') ? 1.1 : 0.9;
+
+    utterance.onend = () => stopVoicePreview();
+    window.speechSynthesis.speak(utterance);
+
+    voicePreviewPlaying = true;
+    btn.textContent = '⏹ Stop';
+    btn.classList.add('playing');
+    btn.disabled = false;
+    status.textContent = 'Playing preview (browser TTS)...';
+  }
+}
+
+function stopVoicePreview() {
+  if (voicePreviewAudio) {
+    voicePreviewAudio.pause();
+    voicePreviewAudio = null;
+  }
+  window.speechSynthesis?.cancel();
+  voicePreviewPlaying = false;
+  const btn = document.getElementById('voicePreviewBtn');
+  if (btn) {
+    btn.textContent = '▶ Preview';
+    btn.classList.remove('playing');
+    btn.disabled = false;
+  }
+  const status = document.getElementById('voicePreviewStatus');
+  if (status) status.style.display = 'none';
+}
 
 // CAPTION SELECTION
 function selectCaption(card) {
