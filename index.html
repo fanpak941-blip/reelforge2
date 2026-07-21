@@ -1500,8 +1500,8 @@ function initCreatePanel() {
     generateScriptBtn.addEventListener('click', handleWriteScript);
   }
   writeScriptBtn = document.getElementById('writeScriptBtn');
+  writeScriptPanel = document.getElementById('writeScriptPanel');
   if (writeScriptBtn) {
-    const writeScriptPanel = document.getElementById('writeScriptPanel');
     writeScriptBtn.addEventListener('click', () => {
       if (writeScriptPanel) writeScriptPanel.style.display = writeScriptPanel.style.display === 'none' ? 'block' : 'none';
     });
@@ -1521,12 +1521,8 @@ function updateScriptMeta(){
   etaLabel.textContent=`⏱ Estimated render time: ~${Math.max(1,Math.round(totalSec*1.6/60))} minutes`;
 }
 
-// "Write Script for Me" — generates a script from a topic + target word
-// count, without starting a full video render.
-const writeScriptBtn=document.getElementById('writeScriptBtn');
-const writeScriptPanel=document.getElementById('writeScriptPanel');
-const generateScriptBtn=document.getElementById('generateScriptBtn');
-const writeScriptStatus=document.getElementById('writeScriptStatus');
+// Write script panel variable (initialized in initCreatePanel)
+let writeScriptPanel;
 
 
 
@@ -1613,7 +1609,7 @@ async function handleGenerate(){
     statusText.textContent='⚠️ Backend not connected yet. Deploy the backend to enable live video generation.';
     btn.disabled=false;btn.textContent='🚀 Generate Video Now';
   }
-});
+}
 
 async function pollStatus(jobId){
   try{
