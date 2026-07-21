@@ -489,6 +489,37 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 
 <!-- Stripe -->
 <script src="https://js.stripe.com/v3/"></script>
+<script>
+const AUTH_API = 'https://reelforge-backendzip-production.up.railway.app/api/auth';
+let authMode = 'signup';
+
+function openAuthModal(mode) {
+  authMode = mode || 'signup';
+  document.getElementById('authModal').classList.add('open');
+  updateAuthModal();
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('authError').style.display = 'none';
+  document.getElementById('authSuccess').style.display = 'none';
+}
+
+function updateAuthModal() {
+  const isLogin = authMode === 'login';
+  document.getElementById('authTitle').textContent = isLogin ? 'Welcome Back' : 'Create Your Account';
+  document.getElementById('authSubtitle').textContent = isLogin ? 'Login to your account' : 'Start creating AI videos today';
+  document.getElementById('authSubmitBtn').textContent = isLogin ? 'Login' : 'Create Account';
+  document.getElementById('signupFields').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('authToggleText').textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
+  document.getElementById('authToggleLink').textContent = isLogin ? ' Sign Up' : ' Login';
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  updateAuthModal();
+}
+</script>
 </head>
 <body>
 
@@ -1625,36 +1656,7 @@ async function pollStatus(jobId){
 </div>
 </div>
 
-<script>
-const AUTH_API = 'https://reelforge-backendzip-production.up.railway.app/api/auth';
-let authMode = 'signup';
-
-function openAuthModal(mode) {
-  authMode = mode || 'signup';
-  document.getElementById('authModal').classList.add('open');
-  updateAuthModal();
-}
-
-function closeAuthModal() {
-  document.getElementById('authModal').classList.remove('open');
-  document.getElementById('authError').style.display = 'none';
-  document.getElementById('authSuccess').style.display = 'none';
-}
-
-function updateAuthModal() {
-  const isLogin = authMode === 'login';
-  document.getElementById('authTitle').textContent = isLogin ? 'Welcome Back' : 'Create Free Account';
-  document.getElementById('authSubtitle').textContent = isLogin ? 'Login to your account' : 'Start creating AI videos today';
-  document.getElementById('authSubmitBtn').textContent = isLogin ? 'Login' : 'Create Free Account';
-  document.getElementById('signupFields').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('authToggleText').textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
-  document.getElementById('authToggleLink').textContent = isLogin ? ' Sign Up' : ' Login';
-}
-
-function toggleAuthMode() {
-  authMode = authMode === 'login' ? 'signup' : 'login';
-  updateAuthModal();
-}
+// auth functions moved to head
 
 async function submitAuth() {
   const btn = document.getElementById('authSubmitBtn');
