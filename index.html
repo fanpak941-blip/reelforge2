@@ -1476,14 +1476,21 @@ const statusBox=document.getElementById('statusBox');
 const progressBar=document.getElementById('progressBar');
 const statusText=document.getElementById('statusText');
 const resultBox=document.getElementById('resultBox');
-const etaLabel=document.getElementById('etaLabel');
-const scriptInputEl=document.getElementById('scriptInput');
-const charCounterEl=document.getElementById('scriptCharCount');
-const autoDurationEl=document.getElementById('autoDurationDisplay');
+let etaLabel, scriptInputEl, charCounterEl, autoDurationEl;
 
-// Live character counter + auto-duration estimate (video length is always
-// derived from the actual script's word count — no manual picker needed)
+function initScriptMeta() {
+  etaLabel = document.getElementById('etaLabel');
+  scriptInputEl = document.getElementById('scriptInput');
+  charCounterEl = document.getElementById('scriptCharCount');
+  autoDurationEl = document.getElementById('autoDurationDisplay');
+  if (scriptInputEl) {
+    scriptInputEl.addEventListener('input', updateScriptMeta);
+    updateScriptMeta();
+  }
+}
+
 function updateScriptMeta(){
+  if (!scriptInputEl || !charCounterEl || !autoDurationEl || !etaLabel) return;
   const text=scriptInputEl.value;
   charCounterEl.textContent=`${text.length.toLocaleString()} / 30,000 characters`;
   const words=text.trim().split(/\s+/).filter(Boolean).length;
@@ -1492,8 +1499,6 @@ function updateScriptMeta(){
   autoDurationEl.textContent=`~${m}m ${s}s (auto)`;
   etaLabel.textContent=`⏱ Estimated render time: ~${Math.max(1,Math.round(totalSec*1.6/60))} minutes`;
 }
-scriptInputEl.addEventListener('input',updateScriptMeta);
-updateScriptMeta();
 
 // "Write Script for Me" — generates a script from a topic + target word
 // count, without starting a full video render.
@@ -1737,6 +1742,7 @@ function updateUserUI(user) {
   }
   showAuthSections(true);
   document.getElementById('dashboardNavLink').style.display = 'inline';
+  setTimeout(initScriptMeta, 100);
   updatePlanUI(user);
   loadMyVideos();
 }
