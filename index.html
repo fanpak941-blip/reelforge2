@@ -1471,23 +1471,37 @@ function getChip(id){
   return s?s.dataset.value:null;
 }
 
-const btn=document.getElementById('generateBtn');
-const statusBox=document.getElementById('statusBox');
-const progressBar=document.getElementById('progressBar');
-const statusText=document.getElementById('statusText');
-const resultBox=document.getElementById('resultBox');
+let btn, statusBox, progressBar, statusText, resultBox;
 let etaLabel, scriptInputEl, charCounterEl, autoDurationEl;
+let writeScriptBtn, generateScriptBtn, writeScriptStatus;
 
-function initScriptMeta() {
+function initCreatePanel() {
+  btn = document.getElementById('generateBtn');
+  statusBox = document.getElementById('statusBox');
+  progressBar = document.getElementById('progressBar');
+  statusText = document.getElementById('statusText');
+  resultBox = document.getElementById('resultBox');
   etaLabel = document.getElementById('etaLabel');
   scriptInputEl = document.getElementById('scriptInput');
   charCounterEl = document.getElementById('scriptCharCount');
   autoDurationEl = document.getElementById('autoDurationDisplay');
+  writeScriptBtn = document.getElementById('writeScriptBtn');
+  generateScriptBtn = document.getElementById('generateScriptBtn');
+  writeScriptStatus = document.getElementById('writeScriptStatus');
+  
   if (scriptInputEl) {
     scriptInputEl.addEventListener('input', updateScriptMeta);
     updateScriptMeta();
   }
+  if (btn) {
+    btn.addEventListener('click', handleGenerate);
+  }
+  if (generateScriptBtn) {
+    generateScriptBtn.addEventListener('click', handleWriteScript);
+  }
 }
+
+
 
 function updateScriptMeta(){
   if (!scriptInputEl || !charCounterEl || !autoDurationEl || !etaLabel) return;
@@ -1548,7 +1562,7 @@ generateScriptBtn.addEventListener('click',async()=>{
   generateScriptBtn.textContent='Generate Script';
 });
 
-btn.addEventListener('click',async()=>{
+async function handleGenerate(){
   const scriptOrTopic=scriptInputEl.value.trim();
   const niche=document.getElementById('nicheSelect').value;
   const voiceVal=document.getElementById('voiceSelect').value;
@@ -1742,7 +1756,7 @@ function updateUserUI(user) {
   }
   showAuthSections(true);
   document.getElementById('dashboardNavLink').style.display = 'inline';
-  setTimeout(initScriptMeta, 100);
+  setTimeout(initCreatePanel, 100);
   updatePlanUI(user);
   loadMyVideos();
 }
