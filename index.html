@@ -491,7 +491,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 <body>
 
 <!-- ANNOUNCEMENT BAR -->
-<div class="ann-bar">🚀 <span>Limited Launch Offer:</span> First month for just $1 — No credit card needed for free features · <a href="#pricing" style="color:var(--gold);font-weight:700;">See Plans →</a></div>
+
 
 <!-- NAV -->
 <nav>
@@ -1591,7 +1591,7 @@ async function pollStatus(jobId){
 }
 </script>
 <!-- AUTH MODAL -->
-<div class="policy-modal" id="authModal" onclick="event.target===this&&closeAuthModal()">
+<div class="modal-overlay" id="authModal" onclick="event.target===this&&closeAuthModal()">
 <div class="policy-box" style="max-width:420px;" onclick="event.stopPropagation()">
   <button class="p-close" onclick="closeAuthModal()">✕</button>
   <div style="text-align:center;margin-bottom:20px;">
