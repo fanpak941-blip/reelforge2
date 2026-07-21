@@ -86,7 +86,7 @@ button.btn-blue,button.btn-outline,button.btn-dark{-webkit-appearance:none;-moz-
 .ann-bar span{color:var(--gold);}
 
 /* NAV */
-nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+nav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;box-shadow:0 1px 4px rgba(0,0,0,.06);}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;}
 .logo{display:flex;align-items:center;gap:9px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;font-size:20px;color:var(--dark);}
 .logo-box{width:34px;height:34px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;}
@@ -477,6 +477,8 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 #createContent{display:none;}
 .auth-section{display:none;}
 .dashboard-section{display:none;}
+#createLoginWall{pointer-events:none;}
+#createLoginWall.active{pointer-events:all;}
 /* LOGIN WALL */
 .login-wall{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;background:linear-gradient(160deg,#F0F5FF 0%,#fff 100%);border:1.5px dashed var(--border);border-radius:16px;margin-top:40px;}
 .login-wall-icon{font-size:48px;margin-bottom:16px;}
@@ -516,8 +518,8 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
         <span id="userName" style="font-size:14px;font-weight:600;color:var(--dark);"></span>
         <button onclick="logout()" style="font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;">Logout</button>
       </div>
-      <button id="loginNavBtn" onclick="openAuthModal('login')" class="btn-outline">Login</button>
-      <button id="signupNavBtn" onclick="openAuthModal('signup')" class="btn-blue">Start Free →</button>
+      <button id="loginNavBtn" onclick="openAuthModal('login')" class="btn-outline" style="position:relative;z-index:600;">Login</button>
+      <button id="signupNavBtn" onclick="openAuthModal('signup')" class="btn-blue" style="position:relative;z-index:600;">Start Free →</button>
     </div>
   </div>
 </nav>
@@ -716,7 +718,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 <!-- CREATE PANEL -->
 <section class="section" id="create">
   <!-- LOGIN WALL (shown when not logged in) -->
-  <div id="createLoginWall" class="wrap" style="display:none;">
+  <div id="createLoginWall" class="wrap" style="display:none;pointer-events:none;">
     <div class="login-wall">
       <div class="login-wall-icon">🔒</div>
       <h3>Login to Create Videos</h3>
