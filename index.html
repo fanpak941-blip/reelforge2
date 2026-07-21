@@ -474,6 +474,9 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 /* AUTH GATE */
 .auth-gated{display:none;}
 .auth-gated.visible{display:block;}
+#createContent{display:none;}
+.auth-section{display:none;}
+.dashboard-section{display:none;}
 /* LOGIN WALL */
 .login-wall{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;background:linear-gradient(160deg,#F0F5FF 0%,#fff 100%);border:1.5px dashed var(--border);border-radius:16px;margin-top:40px;}
 .login-wall-icon{font-size:48px;margin-bottom:16px;}
@@ -808,7 +811,7 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
             <label class="fl">04 — Visual Style</label>
             <div class="chips" id="styleChips">
               <div class="chip sel" data-value="stock">Stock Footage</div>
-              <div class="chip" data-value="avatar">🤖 AI Avatar</div>
+              <div class="chip" data-value="avatar" id="avatarChip">🤖 AI Avatar</div>
               <div class="chip" data-value="image-to-video">Image to Video</div>
               <div class="chip" data-value="mixed">Mixed</div>
             </div>
@@ -869,84 +872,19 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
           </div>
           <div>
             <label class="fl">06 — Caption Style</label>
-            <div class="caption-grid" id="captionChips">
-              <div class="caption-card sel" data-value="classic_white" onclick="selectCaption(this)" title="Classic White">
-                <span class="cc-classic">THE QUICK<br>BROWN FOX</span>
-                <span class="caption-label">Classic</span>
-              </div>
-              <div class="caption-card" data-value="yellow_pop" onclick="selectCaption(this)" title="Yellow Pop">
-                <span class="cc-yellow">THE QUICK</span>
-                <span class="caption-label">Yellow Pop</span>
-              </div>
-              <div class="caption-card" data-value="black_box" onclick="selectCaption(this)" title="Black Box">
-                <span class="cc-blackbox">OVER</span>
-                <span class="caption-label">Black Box</span>
-              </div>
-              <div class="caption-card" data-value="neon_green" onclick="selectCaption(this)" title="Neon Green">
-                <span class="cc-neon">quick</span>
-                <span class="caption-label">Neon</span>
-              </div>
-              <div class="caption-card" data-value="bold_red" onclick="selectCaption(this)" title="Bold Red">
-                <span class="cc-bold_red">THE QUICK</span>
-                <span class="caption-label">Bold Red</span>
-              </div>
-              <div class="caption-card" data-value="pink_highlight" onclick="selectCaption(this)" title="Pink Highlight">
-                <span class="cc-pink">The quick</span>
-                <span class="caption-label">Pink</span>
-              </div>
-              <div class="caption-card" data-value="gradient_blue" onclick="selectCaption(this)" title="Gradient Blue">
-                <span class="cc-gradient" style="font-size:12px;font-weight:900;">THE QUICK</span>
-                <span class="caption-label">Gradient</span>
-              </div>
-              <div class="caption-card" data-value="large_center" onclick="selectCaption(this)" title="Large Center">
-                <span class="cc-large">OVER</span>
-                <span class="caption-label">Large</span>
-              </div>
-              <div class="caption-card" data-value="subtitle_classic" onclick="selectCaption(this)" title="Subtitle">
-                <span class="cc-subtitle">The quick brown fox</span>
-                <span class="caption-label">Subtitle</span>
-              </div>
-            </div>
-
-            <!-- Logo upload -->
-            <div style="margin-top:12px;">
-              <label class="fl" style="margin-bottom:6px;">Logo Watermark (optional)</label>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div id="logoUploadBox" onclick="document.getElementById('logoInput').click()" style="border:2px dashed var(--border);border-radius:8px;padding:10px 16px;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;flex:1;transition:.2s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
-                  <span id="logoUploadText">📎 Upload Logo (PNG)</span>
-                  <img id="logoPreview" src="" alt="" style="display:none;height:28px;border-radius:4px;">
-                </div>
-                <select id="logoPosition" style="padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;">
-                  <option value="top-right">Top Right</option>
-                  <option value="top-left">Top Left</option>
-                  <option value="bottom-right">Bottom Right</option>
-                  <option value="bottom-left">Bottom Left</option>
-                </select>
-              </div>
-              <input type="file" id="logoInput" accept="image/png,image/jpeg" style="display:none;" onchange="previewLogo(this)">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Click to select your caption style</div>
+            <div class="chips" id="captionChips" style="flex-wrap:wrap;">
+              <div class="chip sel" data-value="classic_white">Classic White</div>
+              <div class="chip" data-value="yellow_pop">Yellow Pop</div>
+              <div class="chip" data-value="black_box">Black Box</div>
+              <div class="chip" data-value="neon_green">Neon Green</div>
+              <div class="chip" data-value="bold_red">Bold Red</div>
+              <div class="chip" data-value="pink_highlight">Pink Highlight</div>
+              <div class="chip" data-value="gradient_blue">Gradient Blue</div>
+              <div class="chip" data-value="large_center">Large Center</div>
+              <div class="chip" data-value="subtitle_classic">Subtitle</div>
             </div>
           </div>
-          <div>
-            <label class="fl">07 — Background Music</label>
-            <select id="musicSelect">
-              <option value="none" selected>No Music (Voice Only)</option>
-              <option value="energetic">Energetic / Upbeat</option>
-              <option value="cinematic">Cinematic</option>
-              <option value="ambient">Ambient / Chill</option>
-            </select>
-          </div>
-          <button class="gen-btn" id="generateBtn">🚀 Generate Video Now</button>
-          <div class="eta" id="etaLabel">⏱ Estimated render time will show once you add a script</div>
-          <div id="statusBox">
-            <div class="prog-wrap"><div id="progressBar"></div></div>
-            <div id="statusText"></div>
-            <div id="resultBox"></div>
-          </div>
-          <div style="margin-top:16px;text-align:center;font-size:13px;color:var(--muted);">
-            Having trouble? <a href="#contact" style="color:var(--blue);font-weight:600;text-decoration:none;">Contact our team →</a>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -1586,7 +1524,7 @@ btn.addEventListener('click',async()=>{
     gender=voiceKey;
   }
   const musicStyle=document.getElementById('musicSelect').value;
-  const captionStyle=getSelectedCaption();
+  const captionStyle=getChip('captionChips');
   const style=getChip('styleChips');
   const aspectRatio=getChip('aspectChips');
   if(!scriptOrTopic){alert('Please enter a script or topic first.');return;}
@@ -1748,12 +1686,18 @@ async function submitAuth() {
     } else {
       localStorage.setItem('rf_token', data.token);
       localStorage.setItem('rf_user', JSON.stringify(data.user));
+      // Auto login after both signup and login
+      closeAuthModal();
+      updateUserUI(data.user);
       if (authMode === 'signup') {
-        sucEl.style.display = 'block';
-        sucEl.textContent = '✅ Account created! Please check your email to verify.';
-      } else {
-        closeAuthModal();
-        updateUserUI(data.user);
+        // Show welcome message briefly
+        setTimeout(() => {
+          const welcome = document.createElement('div');
+          welcome.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A56DB;color:#fff;padding:14px 20px;border-radius:10px;font-weight:700;z-index:9999;font-size:14px;';
+          welcome.textContent = '🎉 Welcome to ReelForge!';
+          document.body.appendChild(welcome);
+          setTimeout(() => welcome.remove(), 3000);
+        }, 300);
       }
     }
   } catch(e) {
@@ -2111,7 +2055,13 @@ document.addEventListener('DOMContentLoaded', () => {
     chip.addEventListener('click', () => {
       const val = chip.dataset.value;
       const panel = document.getElementById('avatarPanel');
-      if (panel) panel.classList.toggle('active', val === 'avatar');
+      if (panel) {
+        if (val === 'avatar') {
+          panel.style.display = 'block';
+        } else {
+          panel.style.display = 'none';
+        }
+      }
     });
   });
 });
