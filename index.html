@@ -1656,8 +1656,7 @@ async function pollStatus(jobId){
 </div>
 </div>
 
-// auth functions moved to head
-
+<script>
 async function submitAuth() {
   const btn = document.getElementById('authSubmitBtn');
   const errEl = document.getElementById('authError');
@@ -1690,11 +1689,9 @@ async function submitAuth() {
     } else {
       localStorage.setItem('rf_token', data.token);
       localStorage.setItem('rf_user', JSON.stringify(data.user));
-      // Auto login after both signup and login
       closeAuthModal();
       updateUserUI(data.user);
       if (authMode === 'signup') {
-        // Show welcome message briefly
         setTimeout(() => {
           const welcome = document.createElement('div');
           welcome.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A56DB;color:#fff;padding:14px 20px;border-radius:10px;font-weight:700;z-index:9999;font-size:14px;';
@@ -1710,8 +1707,9 @@ async function submitAuth() {
   }
 
   btn.disabled = false;
-  btn.textContent = authMode === 'login' ? 'Login' : 'Create Free Account';
+  btn.textContent = authMode === 'login' ? 'Login' : 'Create Account';
 }
+</script>
 
 function showAuthSections(show) {
   // Create panel
