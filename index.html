@@ -1499,6 +1499,13 @@ function initCreatePanel() {
   if (generateScriptBtn) {
     generateScriptBtn.addEventListener('click', handleWriteScript);
   }
+  writeScriptBtn = document.getElementById('writeScriptBtn');
+  if (writeScriptBtn) {
+    const writeScriptPanel = document.getElementById('writeScriptPanel');
+    writeScriptBtn.addEventListener('click', () => {
+      if (writeScriptPanel) writeScriptPanel.style.display = writeScriptPanel.style.display === 'none' ? 'block' : 'none';
+    });
+  }
 }
 
 
@@ -1521,11 +1528,9 @@ const writeScriptPanel=document.getElementById('writeScriptPanel');
 const generateScriptBtn=document.getElementById('generateScriptBtn');
 const writeScriptStatus=document.getElementById('writeScriptStatus');
 
-writeScriptBtn.addEventListener('click',()=>{
-  writeScriptPanel.style.display=writeScriptPanel.style.display==='none'?'block':'none';
-});
 
-generateScriptBtn.addEventListener('click',async()=>{
+
+async function handleWriteScript(){
   const topic=document.getElementById('scriptTopicInput').value.trim();
   const wordCount=document.getElementById('scriptWordCount').value;
   const niche=document.getElementById('nicheSelect').value;
@@ -1560,7 +1565,7 @@ generateScriptBtn.addEventListener('click',async()=>{
   }
   generateScriptBtn.disabled=false;
   generateScriptBtn.textContent='Generate Script';
-});
+}
 
 async function handleGenerate(){
   const scriptOrTopic=scriptInputEl.value.trim();
