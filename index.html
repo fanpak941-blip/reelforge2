@@ -495,24 +495,34 @@ let authMode = 'signup';
 
 function openAuthModal(mode) {
   authMode = mode || 'signup';
-  document.getElementById('authModal').classList.add('open');
+  const modal = document.getElementById('authModal');
+  if(modal) modal.classList.add('open');
   updateAuthModal();
 }
 
 function closeAuthModal() {
-  document.getElementById('authModal').classList.remove('open');
-  document.getElementById('authError').style.display = 'none';
-  document.getElementById('authSuccess').style.display = 'none';
+  const modal = document.getElementById('authModal');
+  if(modal) modal.classList.remove('open');
+  const err = document.getElementById('authError');
+  const suc = document.getElementById('authSuccess');
+  if(err) err.style.display = 'none';
+  if(suc) suc.style.display = 'none';
 }
 
 function updateAuthModal() {
   const isLogin = authMode === 'login';
-  document.getElementById('authTitle').textContent = isLogin ? 'Welcome Back' : 'Create Your Account';
-  document.getElementById('authSubtitle').textContent = isLogin ? 'Login to your account' : 'Start creating AI videos today';
-  document.getElementById('authSubmitBtn').textContent = isLogin ? 'Login' : 'Create Account';
-  document.getElementById('signupFields').style.display = isLogin ? 'none' : 'block';
-  document.getElementById('authToggleText').textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
-  document.getElementById('authToggleLink').textContent = isLogin ? ' Sign Up' : ' Login';
+  const title = document.getElementById('authTitle');
+  const subtitle = document.getElementById('authSubtitle');
+  const submitBtn = document.getElementById('authSubmitBtn');
+  const signupFields = document.getElementById('signupFields');
+  const toggleText = document.getElementById('authToggleText');
+  const toggleLink = document.getElementById('authToggleLink');
+  if(title) title.textContent = isLogin ? 'Welcome Back' : 'Create Your Account';
+  if(subtitle) subtitle.textContent = isLogin ? 'Login to your account' : 'Start creating AI videos today';
+  if(submitBtn) submitBtn.textContent = isLogin ? 'Login' : 'Create Account';
+  if(signupFields) signupFields.style.display = isLogin ? 'none' : 'block';
+  if(toggleText) toggleText.textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
+  if(toggleLink) toggleLink.textContent = isLogin ? ' Sign Up' : ' Login';
 }
 
 function toggleAuthMode() {
