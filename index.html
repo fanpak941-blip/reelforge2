@@ -1688,20 +1688,19 @@ async function pollStatus(jobId){
 
 <script>
 async function submitAuth() {
-  const btn = document.getElementById('authSubmitBtn');
+  const submitBtn = document.getElementById('authSubmitBtn');
   const errEl = document.getElementById('authError');
-  const sucEl = document.getElementById('authSuccess');
-  errEl.style.display = 'none';
-  sucEl.style.display = 'none';
+  const email = document.getElementById('authEmail') ? document.getElementById('authEmail').value.trim() : '';
+  const password = document.getElementById('authPassword') ? document.getElementById('authPassword').value : '';
+  const name = document.getElementById('authName') ? document.getElementById('authName').value.trim() : '';
 
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const name = document.getElementById('authName').value.trim();
+  if(errEl) errEl.style.display = 'none';
+  if(!email || !password) {
+    if(errEl) { errEl.style.display='block'; errEl.textContent='Please fill all fields.'; }
+    return;
+  }
 
-  if (!email || !password) { errEl.style.display='block'; errEl.textContent='Please fill all fields.'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Please wait...';
+  if(submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Please wait...'; }
 
   try {
     const endpoint = authMode === 'login' ? '/login' : '/register';
@@ -1714,30 +1713,24 @@ async function submitAuth() {
     const data = await res.json();
 
     if (!res.ok) {
-      errEl.style.display = 'block';
-      errEl.textContent = data.error || 'Something went wrong.';
+      if(errEl) { errEl.style.display = 'block'; errEl.textContent = data.error || 'Something went wrong.'; }
     } else {
       localStorage.setItem('rf_token', data.token);
       localStorage.setItem('rf_user', JSON.stringify(data.user));
       closeAuthModal();
-      updateUserUI(data.user);
-      if (authMode === 'signup') {
-        setTimeout(() => {
-          const welcome = document.createElement('div');
-          welcome.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A56DB;color:#fff;padding:14px 20px;border-radius:10px;font-weight:700;z-index:9999;font-size:14px;';
-          welcome.textContent = '🎉 Welcome to ReelForge!';
-          document.body.appendChild(welcome);
-          setTimeout(() => welcome.remove(), 3000);
-        }, 300);
-      }
+      if(typeof updateUserUI === 'function') updateUserUI(data.user);
+      const welcome = document.createElement('div');
+      welcome.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A56DB;color:#fff;padding:14px 20px;border-radius:10px;font-weight:700;z-index:99999;font-size:14px;';
+      welcome.textContent = authMode === 'signup' ? '🎉 Welcome to ReelForge!' : '👋 Welcome back!';
+      document.body.appendChild(welcome);
+      setTimeout(() => welcome.remove(), 3000);
     }
   } catch(e) {
-    errEl.style.display = 'block';
-    errEl.textContent = 'Connection error. Please try again.';
+    console.error('Auth error:', e);
+    if(errEl) { errEl.style.display = 'block'; errEl.textContent = 'Connection error. Please try again.'; }
   }
 
-  btn.disabled = false;
-  btn.textContent = authMode === 'login' ? 'Login' : 'Create Account';
+  if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = authMode === 'login' ? 'Login' : 'Create Account'; }
 }
 </script>
 
