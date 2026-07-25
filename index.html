@@ -1654,8 +1654,8 @@ async function pollStatus(jobId){
 }
 </script>
 <!-- AUTH MODAL -->
-<div class="modal-overlay" id="authModal" onclick="if(event.target===this)closeAuthModal()">
-<div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;position:relative;z-index:100000;" onclick="event.stopPropagation()">
+<div class="modal-overlay" id="authModal" onclick="event.target===this&&closeAuthModal()">
+<div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;position:relative;" onclick="event.stopPropagation()">
   <button class="p-close" onclick="closeAuthModal()">✕</button>
   <div style="text-align:center;margin-bottom:20px;">
     <div class="logo-box" style="margin:0 auto 10px;width:44px;height:44px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#fff;"><path d="M5 3l14 9-14 9V3z"/></svg></div>
@@ -1690,7 +1690,7 @@ async function pollStatus(jobId){
 async function submitAuth() {
   const submitBtn = document.getElementById('authSubmitBtn');
   const errEl = document.getElementById('authError');
-  const email = document.getElementById('authEmail') ? document.getElementById('authEmail').value.trim().toLowerCase() : '';
+  const email = document.getElementById('authEmail') ? document.getElementById('authEmail').value.trim() : '';
   const password = document.getElementById('authPassword') ? document.getElementById('authPassword').value : '';
   const name = document.getElementById('authName') ? document.getElementById('authName').value.trim() : '';
 
@@ -1718,12 +1718,8 @@ async function submitAuth() {
       localStorage.setItem('rf_token', data.token);
       localStorage.setItem('rf_user', JSON.stringify(data.user));
       closeAuthModal();
-      if(typeof updateUserUI === 'function') updateUserUI(data.user);
-      const welcome = document.createElement('div');
-      welcome.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A56DB;color:#fff;padding:14px 20px;border-radius:10px;font-weight:700;z-index:99999;font-size:14px;';
-      welcome.textContent = authMode === 'signup' ? '🎉 Welcome to ReelForge!' : '👋 Welcome back!';
-      document.body.appendChild(welcome);
-      setTimeout(() => welcome.remove(), 3000);
+      // Reload page so all elements initialize properly with logged-in state
+      window.location.reload();
     }
   } catch(e) {
     console.error('Auth error:', e);
@@ -1732,6 +1728,7 @@ async function submitAuth() {
 
   if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = authMode === 'login' ? 'Login' : 'Create Account'; }
 }
+</script>
 
 function showAuthSections(show) {
   // Create panel
@@ -1745,35 +1742,41 @@ function showAuthSections(show) {
   });
 }
 
+function el(id) { return document.getElementById(id); }
+
 function updateUserUI(user) {
-  document.getElementById('loginNavBtn').style.display = 'none';
-  document.getElementById('signupNavBtn').style.display = 'none';
-  document.getElementById('userInfo').style.display = 'flex';
-  document.getElementById('userName').textContent = user.name;
-  if (user.avatar) {
-    document.getElementById('userAvatar').src = user.avatar;
-    document.getElementById('userAvatar').style.display = 'block';
+  try {
+    if(el('loginNavBtn')) el('loginNavBtn').style.display = 'none';
+    if(el('signupNavBtn')) el('signupNavBtn').style.display = 'none';
+    if(el('userInfo')) el('userInfo').style.display = 'flex';
+    if(el('userName')) el('userName').textContent = user.name || '';
+    if(user.avatar && el('userAvatar')) {
+      el('userAvatar').src = user.avatar;
+      el('userAvatar').style.display = 'block';
+    }
+    if(user.plan === 'owner' && el('ownerPill')) {
+      el('ownerPill').style.display = 'inline-block';
+    }
+    showAuthSections(true);
+    if(el('dashboardNavLink')) el('dashboardNavLink').style.display = 'inline';
+    setTimeout(initCreatePanel, 100);
+    if(typeof updatePlanUI === 'function') updatePlanUI(user);
+    if(typeof loadMyVideos === 'function') loadMyVideos();
+  } catch(e) {
+    console.error('updateUserUI error:', e);
   }
-  if (user.plan === 'owner') {
-    document.getElementById('ownerPill').style.display = 'inline-block';
-  }
-  showAuthSections(true);
-  document.getElementById('dashboardNavLink').style.display = 'inline';
-  setTimeout(initCreatePanel, 100);
-  updatePlanUI(user);
-  loadMyVideos();
 }
 
 function logout() {
   localStorage.removeItem('rf_token');
   localStorage.removeItem('rf_user');
-  document.getElementById('loginNavBtn').style.display = 'inline-block';
-  document.getElementById('signupNavBtn').style.display = 'inline-block';
-  document.getElementById('userInfo').style.display = 'none';
-  document.getElementById('ownerPill').style.display = 'none';
+  if(el('loginNavBtn')) el('loginNavBtn').style.display = 'inline-block';
+  if(el('signupNavBtn')) el('signupNavBtn').style.display = 'inline-block';
+  if(el('userInfo')) el('userInfo').style.display = 'none';
+  if(el('ownerPill')) el('ownerPill').style.display = 'none';
   showAuthSections(false);
-  document.getElementById('dashboardNavLink').style.display = 'none';
-  document.getElementById('videoGrid').innerHTML = '';
+  if(el('dashboardNavLink')) el('dashboardNavLink').style.display = 'none';
+  if(el('videoGrid')) el('videoGrid').innerHTML = '';
 }
 
 
@@ -2227,18 +2230,14 @@ window.addEventListener('DOMContentLoaded', () => {
     updateUserUI(JSON.parse(savedUser));
     // Refresh user data from server on every page load
     fetch(AUTH_API + '/me', { headers: { Authorization: 'Bearer ' + savedToken } })
-      .then(async r => {
-        if (r.status === 401) { logout(); return null; }
-        if (!r.ok) return null; // transient server error — keep user logged in with cached data
-        return r.json();
-      })
+      .then(r => r.json())
       .then(data => {
-        if (data && data.user) {
+        if (data.user) {
           localStorage.setItem('rf_user', JSON.stringify(data.user));
           updateUserUI(data.user);
         }
       })
-      .catch(() => { /* network blip — don't log out, keep cached session */ });
+      .catch(() => logout());
     loadMyVideos();
   } else {
     // Not logged in — hide gated sections, show login wall
