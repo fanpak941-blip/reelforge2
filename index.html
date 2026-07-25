@@ -1705,11 +1705,13 @@ async function submitAuth() {
   try {
     const endpoint = authMode === 'login' ? '/login' : '/register';
     const body = authMode === 'login' ? { email, password } : { name, email, password };
+    console.log('Fetching:', AUTH_API + endpoint, body);
     const res = await fetch(AUTH_API + endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
+    console.log('Response status:', res.status);
     const data = await res.json();
 
     if (!res.ok) {
@@ -1722,8 +1724,11 @@ async function submitAuth() {
       window.location.reload();
     }
   } catch(e) {
-    console.error('Auth error:', e);
-    if(errEl) { errEl.style.display = 'block'; errEl.textContent = 'Connection error. Please try again.'; }
+    console.error('Auth error FULL:', e.message, e.stack);
+    if(errEl) { 
+      errEl.style.display = 'block'; 
+      errEl.textContent = 'Error: ' + e.message; 
+    }
   }
 
   if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = authMode === 'login' ? 'Login' : 'Create Account'; }
