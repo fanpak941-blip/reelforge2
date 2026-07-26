@@ -2242,7 +2242,7 @@ window.addEventListener('DOMContentLoaded', () => {
           updateUserUI(data.user);
         }
       })
-      .catch(() => logout());
+      .catch((e) => { console.warn('/me fetch failed:', e.message); /* Keep user logged in */ });
     loadMyVideos();
   } else {
     // Not logged in — hide gated sections, show login wall
