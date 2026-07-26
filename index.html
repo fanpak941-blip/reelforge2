@@ -829,19 +829,71 @@ function toggleAuthMode() {
               <label class="fl">03 — Voice</label>
               <div class="voice-select-row">
                 <select id="voiceSelect" onchange="stopVoicePreview()">
-                  <option value="english-warm_friendly">🇺🇸 English — Warm &amp; Friendly (F)</option>
-                  <option value="english-energetic_male">🇺🇸 English — Energetic (M)</option>
-                  <option value="english-calm_female">🇺🇸 English — Calm (F)</option>
-                  <option value="english-deep_authoritative">🇺🇸 English — Deep &amp; Authoritative (M)</option>
-                  <option value="english-professional_female">🇺🇸 English — Professional (F)</option>
-                  <option value="urdu-male">🇵🇰 Urdu — Male</option>
-                  <option value="urdu-female">🇵🇰 Urdu — Female</option>
-                  <option value="hindi-male">🇮🇳 Hindi — Male</option>
-                  <option value="hindi-female">🇮🇳 Hindi — Female</option>
-                  <option value="german-male">🇩🇪 German — Male</option>
-                  <option value="german-female">🇩🇪 German — Female</option>
-                  <option value="spanish-male">🇪🇸 Spanish — Male</option>
-                  <option value="spanish-female">🇪🇸 Spanish — Female</option>
+                  <optgroup label="🇺🇸 English — Female">
+                    <option value="english-warm_friendly">Sarah — Warm &amp; Friendly</option>
+                    <option value="english-calm_female">Rachel — Calm &amp; Clear</option>
+                    <option value="english-professional_female">Bella — Professional</option>
+                    <option value="english-matilda">Matilda — Natural</option>
+                    <option value="english-alice">Alice — Confident</option>
+                    <option value="english-grace">Grace — Soft</option>
+                    <option value="english-charlotte">Charlotte — Seductive</option>
+                    <option value="english-glinda">Glinda — Warm</option>
+                  </optgroup>
+                  <optgroup label="🇺🇸 English — Male">
+                    <option value="english-energetic_male">Josh — Energetic</option>
+                    <option value="english-deep_authoritative">Adam — Deep &amp; Authoritative</option>
+                    <option value="english-daniel">Daniel — News Presenter</option>
+                    <option value="english-liam">Liam — Narration</option>
+                    <option value="english-callum">Callum — Characters</option>
+                    <option value="english-fin">Fin — Sailor</option>
+                    <option value="english-arnold">Arnold — Strong</option>
+                    <option value="english-sam">Sam — Raspy</option>
+                    <option value="english-antoni">Antoni — Well-Rounded</option>
+                  </optgroup>
+                  <optgroup label="🇵🇰 Urdu">
+                    <option value="urdu-male">Urdu — Male</option>
+                    <option value="urdu-female">Urdu — Female</option>
+                  </optgroup>
+                  <optgroup label="🇮🇳 Hindi">
+                    <option value="hindi-male">Hindi — Male</option>
+                    <option value="hindi-female">Hindi — Female</option>
+                  </optgroup>
+                  <optgroup label="🇩🇪 German">
+                    <option value="german-male">German — Male</option>
+                    <option value="german-female">German — Female</option>
+                  </optgroup>
+                  <optgroup label="🇪🇸 Spanish">
+                    <option value="spanish-male">Spanish — Male</option>
+                    <option value="spanish-female">Spanish — Female</option>
+                  </optgroup>
+                  <optgroup label="🇫🇷 French">
+                    <option value="french-male">French — Male</option>
+                    <option value="french-female">French — Female</option>
+                  </optgroup>
+                  <optgroup label="🇮🇹 Italian">
+                    <option value="italian-male">Italian — Male</option>
+                    <option value="italian-female">Italian — Female</option>
+                  </optgroup>
+                  <optgroup label="🇵🇹 Portuguese">
+                    <option value="portuguese-male">Portuguese — Male</option>
+                    <option value="portuguese-female">Portuguese — Female</option>
+                  </optgroup>
+                  <optgroup label="🇸🇦 Arabic">
+                    <option value="arabic-male">Arabic — Male</option>
+                    <option value="arabic-female">Arabic — Female</option>
+                  </optgroup>
+                  <optgroup label="🇯🇵 Japanese">
+                    <option value="japanese-male">Japanese — Male</option>
+                    <option value="japanese-female">Japanese — Female</option>
+                  </optgroup>
+                  <optgroup label="🇰🇷 Korean">
+                    <option value="korean-male">Korean — Male</option>
+                    <option value="korean-female">Korean — Female</option>
+                  </optgroup>
+                  <optgroup label="🇨🇳 Chinese">
+                    <option value="chinese-male">Chinese — Male</option>
+                    <option value="chinese-female">Chinese — Female</option>
+                  </optgroup>
                 </select>
                 <button type="button" class="voice-preview-btn" id="voicePreviewBtn" onclick="toggleVoicePreview()">
                   ▶ Preview
@@ -1916,19 +1968,45 @@ let voicePreviewPlaying = false;
 
 // Sample texts per language
 const VOICE_SAMPLES = {
-  "english-warm_friendly":       "Hi there! Welcome to ReelForge. Your warm and friendly AI presenter.",
-  "english-energetic_male":      "ReelForge creates amazing videos in minutes. Get ready to grow!",
-  "english-calm_female":         "Hello. ReelForge helps you create professional videos effortlessly.",
-  "english-deep_authoritative":  "ReelForge. The most powerful AI video platform for creators.",
-  "english-professional_female": "Welcome to ReelForge. Your professional AI video creation platform.",
-  "urdu-male":   "ReelForge mein khush amdeed. Main aap ka Urdu awaaz hoon.",
-  "urdu-female": "ReelForge aap ki video banane ka behtareen platform hai.",
-  "hindi-male":  "ReelForge mein aapka swagat hai. Main aapki Hindi aawaz hoon.",
-  "hindi-female": "ReelForge ke saath apni video banaiye.",
-  "german-male": "Willkommen bei ReelForge. Erstellen Sie professionelle Videos mit KI.",
-  "german-female": "ReelForge macht die Videoerstellung einfach und schnell.",
-  "spanish-male": "Bienvenido a ReelForge. Crea videos increibles con inteligencia artificial.",
-  "spanish-female": "ReelForge, tu plataforma de creacion de videos con IA.",
+  "english-warm_friendly":        "Hi there! Welcome to ReelForge. Your warm and friendly AI presenter.",
+  "english-calm_female":          "Hello. ReelForge helps you create professional videos effortlessly.",
+  "english-professional_female":  "Welcome to ReelForge. Your professional AI video creation platform.",
+  "english-matilda":              "ReelForge makes video creation natural and effortless.",
+  "english-alice":                "ReelForge. Create stunning AI videos with confidence.",
+  "english-grace":                "Welcome to ReelForge. Beautiful videos made simple.",
+  "english-charlotte":            "ReelForge creates amazing content just for you.",
+  "english-glinda":               "Welcome to ReelForge, where magic meets video creation.",
+  "english-energetic_male":       "ReelForge creates amazing videos in minutes. Get ready to grow!",
+  "english-deep_authoritative":   "ReelForge. The most powerful AI video platform for creators.",
+  "english-daniel":               "Breaking news: ReelForge is revolutionizing video creation worldwide.",
+  "english-liam":                 "ReelForge narrates your story with professional quality voiceovers.",
+  "english-callum":               "ReelForge brings your characters and stories to life.",
+  "english-fin":                  "Ahoy! ReelForge sets sail into the world of AI video creation.",
+  "english-arnold":               "ReelForge. Strong. Powerful. Professional AI video generation.",
+  "english-sam":                  "ReelForge gives your videos that unique raspy professional edge.",
+  "english-antoni":               "ReelForge delivers well-rounded professional AI voiceovers.",
+  "urdu-male":                    "ReelForge mein khush amdeed. Urdu mein behtareen videos banayein.",
+  "urdu-female":                  "ReelForge ke saath Urdu mein shandar videos tayar karein.",
+  "hindi-male":                   "ReelForge mein aapka swagat hai. AI se videos banaye.",
+  "hindi-female":                 "ReelForge ke saath apni video banaiye Hindi mein.",
+  "german-male":                  "Willkommen bei ReelForge. Erstellen Sie professionelle Videos.",
+  "german-female":                "ReelForge macht die Videoerstellung einfach und schnell.",
+  "spanish-male":                 "Bienvenido a ReelForge. Crea videos increibles con IA.",
+  "spanish-female":               "ReelForge, tu plataforma de creacion de videos con IA.",
+  "french-male":                  "Bienvenue sur ReelForge. Creez des videos professionnelles.",
+  "french-female":                "ReelForge, votre plateforme de creation de videos par IA.",
+  "italian-male":                 "Benvenuto su ReelForge. Crea video professionali con AI.",
+  "italian-female":               "ReelForge, la tua piattaforma video con intelligenza artificiale.",
+  "portuguese-male":              "Bem-vindo ao ReelForge. Crie videos profissionais com IA.",
+  "portuguese-female":            "ReelForge, sua plataforma de criacao de videos com IA.",
+  "arabic-male":                  "Welcome to ReelForge. Professional AI video creation in Arabic.",
+  "arabic-female":                "ReelForge creates beautiful videos in Arabic language.",
+  "japanese-male":                "Welcome to ReelForge. Professional AI videos in Japanese.",
+  "japanese-female":              "ReelForge makes beautiful Japanese language videos.",
+  "korean-male":                  "Welcome to ReelForge. Professional AI videos in Korean.",
+  "korean-female":                "ReelForge creates amazing Korean language content.",
+  "chinese-male":                 "Welcome to ReelForge. Professional AI videos in Chinese.",
+  "chinese-female":               "ReelForge creates beautiful Chinese language videos.",
 };
 
 async function toggleVoicePreview() {
