@@ -479,6 +479,33 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 .dashboard-section{display:none;}
 #createLoginWall{pointer-events:none;}
 #createLoginWall.active{pointer-events:all;}
+
+/* LOGIN ANIMATION */
+@keyframes fadeInScale {
+  from { opacity:0; transform:scale(0.85) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.modal-overlay.open .modal-inner-box {
+  animation: fadeInScale 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes toastIn {
+  from { opacity:0; transform:translateX(100px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+@keyframes toastOut {
+  from { opacity:1; transform:translateX(0); }
+  to   { opacity:0; transform:translateX(100px); }
+}
+.rf-toast {
+  position:fixed; top:24px; right:24px;
+  background:linear-gradient(135deg,#1A56DB,#7C3AED);
+  color:#fff; padding:14px 22px; border-radius:12px;
+  font-weight:700; font-size:14px; z-index:99999;
+  box-shadow:0 8px 32px rgba(26,86,219,.35);
+  animation:toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+.rf-toast.hide { animation:toastOut 0.3s ease forwards; }
+
 /* LOGIN WALL */
 .login-wall{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;background:linear-gradient(160deg,#F0F5FF 0%,#fff 100%);border:1.5px dashed var(--border);border-radius:16px;margin-top:40px;}
 .login-wall-icon{font-size:48px;margin-bottom:16px;}
@@ -528,6 +555,14 @@ function updateAuthModal() {
 function toggleAuthMode() {
   authMode = authMode === 'login' ? 'signup' : 'login';
   updateAuthModal();
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'rf-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.classList.add('hide'); setTimeout(() => t.remove(), 400); }, 2000);
 }
 </script>
 </head>
@@ -920,28 +955,37 @@ function toggleAuthMode() {
               <button type="button" id="useCustomAvatar" onclick="switchAvatarMode('custom')" style="flex:1;padding:8px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--dark);font-weight:700;font-size:12px;cursor:pointer;">My Photo</button>
             </div>
 
-            <!-- Default presenters -->
+            <!-- HeyGen Avatars -->
             <div id="defaultPresenters">
               <div class="presenter-grid">
-                <div class="presenter-card sel" data-img="https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg" onclick="selectPresenter(this)">
-                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg" alt="Amy">
-                  <p>Amy</p>
+                <div class="presenter-card sel" data-avatar-id="Daisy-inskirt-20220818" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/Daisy-inskirt-20220818/preview_target.webp" alt="Daisy" onerror="this.src='https://ui-avatars.com/api/?name=Daisy&size=100&background=1A56DB&color=fff'">
+                  <p>Daisy</p>
                 </div>
-                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Daniel_m/image.jpeg" onclick="selectPresenter(this)">
-                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Daniel_m/image.jpeg" alt="Daniel">
-                  <p>Daniel</p>
+                <div class="presenter-card" data-avatar-id="josh_lite3_20230714" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/josh_lite3_20230714/preview_target.webp" alt="Josh" onerror="this.src='https://ui-avatars.com/api/?name=Josh&size=100&background=1A56DB&color=fff'">
+                  <p>Josh</p>
                 </div>
-                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Anna_f/image.jpeg" onclick="selectPresenter(this)">
-                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Anna_f/image.jpeg" alt="Anna">
-                  <p>Anna</p>
+                <div class="presenter-card" data-avatar-id="Monica-inblackdress-20220818" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/Monica-inblackdress-20220818/preview_target.webp" alt="Monica" onerror="this.src='https://ui-avatars.com/api/?name=Monica&size=100&background=1A56DB&color=fff'">
+                  <p>Monica</p>
                 </div>
-                <div class="presenter-card" data-img="https://create-images-results.d-id.com/DefaultPresenters/Michael_m/image.jpeg" onclick="selectPresenter(this)">
-                  <img src="https://create-images-results.d-id.com/DefaultPresenters/Michael_m/image.jpeg" alt="Michael">
-                  <p>Michael</p>
+                <div class="presenter-card" data-avatar-id="Wayne_20240711" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/Wayne_20240711/preview_target.webp" alt="Wayne" onerror="this.src='https://ui-avatars.com/api/?name=Wayne&size=100&background=1A56DB&color=fff'">
+                  <p>Wayne</p>
+                </div>
+                <div class="presenter-card" data-avatar-id="Abigail_expressive_20230814" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/Abigail_expressive_20230814/preview_target.webp" alt="Abigail" onerror="this.src='https://ui-avatars.com/api/?name=Abigail&size=100&background=1A56DB&color=fff'">
+                  <p>Abigail</p>
+                </div>
+                <div class="presenter-card" data-avatar-id="Eric_public_pro2_20230608" onclick="selectPresenter(this)">
+                  <img src="https://files2.heygen.ai/avatar/v3/Eric_public_pro2_20230608/preview_target.webp" alt="Eric" onerror="this.src='https://ui-avatars.com/api/?name=Eric&size=100&background=1A56DB&color=fff'">
+                  <p>Eric</p>
                 </div>
               </div>
             </div>
 
+            
             <!-- Custom photo upload -->
             <div id="customAvatarUpload" style="display:none;">
               <div class="avatar-upload-box" onclick="document.getElementById('avatarPhotoInput').click()">
@@ -1707,7 +1751,7 @@ async function pollStatus(jobId){
 </script>
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="authModal" onclick="event.target===this&&closeAuthModal()">
-<div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;position:relative;" onclick="event.stopPropagation()">
+<div class="modal-inner-box" style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;position:relative;" onclick="event.stopPropagation()">
   <button class="p-close" onclick="closeAuthModal()">✕</button>
   <div style="text-align:center;margin-bottom:20px;">
     <div class="logo-box" style="margin:0 auto 10px;width:44px;height:44px;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#fff;"><path d="M5 3l14 9-14 9V3z"/></svg></div>
@@ -1772,8 +1816,8 @@ async function submitAuth() {
       localStorage.setItem('rf_token', data.token);
       localStorage.setItem('rf_user', JSON.stringify(data.user));
       closeAuthModal();
-      // Reload page so all elements initialize properly with logged-in state
-      window.location.reload();
+      showToast(authMode === 'signup' ? '🎉 Welcome to ReelForge!' : '👋 Welcome back!');
+      setTimeout(() => window.location.reload(), 1500);
     }
   } catch(e) {
     console.error('Auth error FULL:', e.message, e.stack);
@@ -2128,7 +2172,8 @@ function previewLogo(input) {
 }
 
 // AVATAR FUNCTIONS
-let selectedPresenterImg = 'https://create-images-results.d-id.com/DefaultPresenters/Amalia_f/image.jpeg';
+let selectedPresenterImg = '';
+let selectedAvatarId = 'Daisy-inskirt-20220818';
 let avatarMode = 'default'; // 'default' or 'custom'
 let customPhotoFile = null;
 
@@ -2145,7 +2190,8 @@ function switchAvatarMode(mode) {
 function selectPresenter(card) {
   document.querySelectorAll('.presenter-card').forEach(c => c.classList.remove('sel'));
   card.classList.add('sel');
-  selectedPresenterImg = card.dataset.img;
+  selectedPresenterImg = card.dataset.img || '';
+  selectedAvatarId = card.dataset.avatarId || 'Daisy-inskirt-20220818';
 }
 
 function previewAvatarPhoto(input) {
