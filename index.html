@@ -1252,8 +1252,8 @@ function showToast(msg) {
       </div>
     </div>
 
-    <!-- SEO Results -->
-    <div id="seoResults" style="display:none;margin-top:24px;">
+    <!-- SEO Results — shown by default with demo data -->
+    <div id="seoResults" style="display:block;margin-top:24px;">
       <div class="seo-grid">
         <!-- SEO Package -->
         <div class="seo-card">
@@ -2099,6 +2099,7 @@ function updateUserUI(user) {
     showAuthSections(true);
     if(el('dashboardNavLink')) el('dashboardNavLink').style.display = 'inline';
     setTimeout(initCreatePanel, 100);
+  setTimeout(initSEODemo, 100);
     if(typeof updatePlanUI === 'function') updatePlanUI(user);
     if(typeof loadMyVideos === 'function') loadMyVideos();
   } catch(e) {
@@ -2408,6 +2409,60 @@ function previewLogo(input) {
   reader.readAsDataURL(input.files[0]);
 }
 
+
+
+// Pre-fill SEO demo data on load
+function initSEODemo() {
+  const demoTitle = 'How to Make $500 Online in 2026 (Complete Beginner Guide)';
+  const demoDesc = `Want to make money online in 2026 but don't know where to start?
+
+In this video, I'm going to show you the exact step-by-step method that complete beginners are using to earn $500-$5,000 per month — with zero experience required.
+
+⏱ TIMESTAMPS:
+00:00 - Introduction
+01:30 - Why this method works in 2026
+03:00 - Step-by-step breakdown
+07:00 - Real results & proof
+09:30 - How to get started today
+
+🔗 RESOURCES MENTIONED:
+→ Free starter guide: [link]
+→ Join our community: [link]
+
+If you found this helpful, SUBSCRIBE and hit the bell 🔔 for weekly videos!
+
+#makemoneyonline #sidehustle #passiveincome #freelancing2026 #onlinebusiness`;
+
+  const demoTags = ['make money online','side hustle 2026','passive income','work from home','online business','freelancing','make money fast','digital marketing','YouTube automation','AI tools 2026','beginner guide','earn money online','financial freedom','online income','content creation','YouTube growth','monetize YouTube','start online business','remote work','entrepreneur'];
+
+  const demoKeywords = [
+    {keyword: 'how to make money online fast', volume: '2.4M', competition: 'Medium'},
+    {keyword: 'AI tools for beginners 2026', volume: '890K', competition: 'Low'},
+    {keyword: 'freelance skills that pay well', volume: '1.1M', competition: 'Low'},
+    {keyword: 'passive income ideas 2026', volume: '3.2M', competition: 'High'},
+    {keyword: 'YouTube automation channel', volume: '670K', competition: 'Low'},
+  ];
+
+  const titleEl = document.getElementById('seoTitle');
+  const descEl = document.getElementById('seoDesc');
+  const tagsEl = document.getElementById('seoTagsDisplay');
+  const tagsRawEl = document.getElementById('seoTags');
+  const kwEl = document.getElementById('seoKeywords');
+
+  if (titleEl) titleEl.textContent = demoTitle;
+  if (descEl) descEl.textContent = demoDesc;
+  if (tagsRawEl) tagsRawEl.textContent = demoTags.join(', ');
+  if (tagsEl) {
+    tagsEl.innerHTML = demoTags.slice(0, 8).map(t => '<span class="tag-pill">' + t + '</span>').join('') +
+      '<span class="tag-pill">+' + (demoTags.length - 8) + ' more</span>';
+  }
+  if (kwEl) {
+    kwEl.innerHTML = demoKeywords.map(kw => {
+      const c = kw.competition === 'Low' ? 'low' : kw.competition === 'High' ? 'high' : 'med';
+      return '<div class="kw-row"><span>' + kw.keyword + '</span><span class="kw-vol">' + kw.volume + '</span><span class="comp ' + c + '">' + kw.competition + '</span></div>';
+    }).join('');
+  }
+}
 
 // SEO GENERATOR
 async function generateSEO() {
