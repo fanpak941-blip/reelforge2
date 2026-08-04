@@ -2466,7 +2466,8 @@ async function generateSEO() {
 
   } catch(e) {
     loading.style.display = 'none';
-    alert('Error: ' + e.message);
+    console.error('SEO Error:', e);
+    alert('SEO Error: ' + e.message + '\n\nPlease check Railway logs.');
   }
 
   btn.disabled = false;
