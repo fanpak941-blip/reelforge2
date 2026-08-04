@@ -436,6 +436,123 @@ footer{background:var(--dark);color:#fff;padding:56px 0 28px;}
 .cc-trending{color:#fff;font-size:12px;font-weight:900;text-shadow:2px 2px 0 #FF2D2D;}
 .caption-label{position:absolute;bottom:3px;right:4px;font-size:9px;color:rgba(255,255,255,.6);}
 
+
+/* ANIMATED DEMO CARDS */
+@keyframes typing {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+@keyframes wave-bar {
+  0%, 100% { height: 8px; }
+  50%       { height: 32px; }
+}
+@keyframes float-kw {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.demo-card-animated {
+  background: #0F172A;
+  border-radius: 14px;
+  overflow: hidden;
+  height: 200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.demo-card-animated .window-bar {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 14px;
+}
+.demo-card-animated .dot-r { width:10px;height:10px;border-radius:50%;background:#FF5F57; }
+.demo-card-animated .dot-y { width:10px;height:10px;border-radius:50%;background:#FFBD2E; }
+.demo-card-animated .dot-g { width:10px;height:10px;border-radius:50%;background:#28CA41; }
+.demo-card-animated .win-title { color:rgba(255,255,255,.4);font-size:11px;margin-left:8px; }
+
+/* Demo 1 — Script typing */
+.typing-line {
+  height: 10px; border-radius: 4px; background: rgba(255,255,255,.1);
+  margin-bottom: 8px; overflow: hidden; position: relative;
+}
+.typing-line::after {
+  content: '';
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: linear-gradient(90deg, #1A56DB, #7C3AED);
+  border-radius: 4px;
+  animation: progress-fill 2s ease forwards;
+  animation-delay: var(--delay, 0s);
+  width: 0;
+}
+.typing-cursor { display: inline-block; width: 2px; height: 14px; background: #1A56DB; animation: blink 1s infinite; vertical-align: middle; margin-left: 4px; }
+.step-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.step-badge.done { background: rgba(40,202,65,.15); color: #28CA41; }
+.step-badge.active { background: rgba(26,86,219,.2); color: #60A5FA; }
+.step-badge.wait { background: rgba(255,255,255,.05); color: rgba(255,255,255,.3); }
+
+/* Demo 2 — Voice wave */
+.voice-wave-demo {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px; height: 60px; margin: 8px 0;
+}
+.voice-wave-demo span {
+  width: 4px; background: linear-gradient(180deg, #1A56DB, #7C3AED);
+  border-radius: 99px; display: block;
+  animation: wave-bar 0.8s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+  height: 8px;
+}
+.avatar-circle {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #1A56DB, #7C3AED);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin: 0 auto 8px;
+  box-shadow: 0 0 0 3px rgba(26,86,219,.3), 0 0 0 6px rgba(26,86,219,.1);
+  animation: float-kw 2s ease-in-out infinite;
+}
+.lip-sync-bar {
+  height: 4px; border-radius: 99px; background: rgba(255,255,255,.1);
+  overflow: hidden; margin-top: 8px;
+}
+.lip-sync-bar::after {
+  content: ''; display: block; height: 100%;
+  background: linear-gradient(90deg, #1A56DB, #7C3AED);
+  animation: progress-fill 1.5s ease-in-out infinite alternate;
+}
+
+/* Demo 3 — SEO keywords */
+.kw-demo-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+  animation: fadeUp 0.5s ease forwards;
+  animation-delay: var(--d, 0s);
+  opacity: 0;
+}
+.kw-demo-pill {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+}
+.kw-demo-pill.low  { background: rgba(40,202,65,.15); color: #28CA41; }
+.kw-demo-pill.med  { background: rgba(255,189,46,.15); color: #FFBD2E; }
+.kw-demo-pill.high { background: rgba(239,68,68,.15); color: #F87171; }
+.kw-vol-demo { font-size: 11px; font-weight: 700; color: #60A5FA; }
+
 /* AVATAR PANEL */
 .avatar-panel{display:none;margin-top:16px;padding:16px;border:1.5px solid var(--border);border-radius:10px;background:#F8FAFC;}
 .avatar-panel.active{display:block;}
@@ -683,41 +800,113 @@ function showToast(msg) {
   <div class="wrap">
     <div class="tag">Platform Demos</div>
     <div class="sec-title">See ReelForge in Action</div>
-    <p class="sec-sub">Watch these short demos to see how ReelForge transforms a simple script into a publish-ready YouTube video.</p>
+    <p class="sec-sub">Watch how ReelForge transforms a simple topic into a publish-ready YouTube video — automatically.</p>
     <div class="trailers">
-      <div class="trailer-card" onclick="document.getElementById('trailerModal1').classList.add('open')">
-        <div class="trailer-thumb" style="background:linear-gradient(135deg,#DBEAFE,#EEF2FF);">
-          🎬
-          <div class="trailer-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
-          <div class="trailer-duration">0:10</div>
+
+      <!-- Demo 1: Script to Video -->
+      <div class="trailer-card" onclick="document.getElementById('trailerModal1').classList.add('open')" style="cursor:pointer;">
+        <div style="background:#0F172A;padding:20px;height:190px;position:relative;overflow:hidden;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#FF5F57;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#FFBD2E;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#28CA41;display:block;"></span>
+            <span style="color:rgba(255,255,255,.4);font-size:11px;margin-left:8px;">ReelForge Studio</span>
+          </div>
+          <div style="color:rgba(255,255,255,.5);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">✦ Generating your video...</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;background:#28CA41;border-radius:50%;display:block;flex-shrink:0;"></span><span style="color:rgba(255,255,255,.7);font-size:12px;">Writing script</span><span style="margin-left:auto;color:#28CA41;font-size:11px;font-weight:700;">✓</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;background:#28CA41;border-radius:50%;display:block;flex-shrink:0;"></span><span style="color:rgba(255,255,255,.7);font-size:12px;">Recording voiceover</span><span style="margin-left:auto;color:#28CA41;font-size:11px;font-weight:700;">✓</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;background:#1A56DB;border-radius:50%;display:block;flex-shrink:0;animation:blink 1s infinite;"></span><span style="color:#60A5FA;font-size:12px;font-weight:600;">Finding visuals...</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;background:rgba(255,255,255,.2);border-radius:50%;display:block;flex-shrink:0;"></span><span style="color:rgba(255,255,255,.3);font-size:12px;">Building video</span></div>
+          </div>
+          <div style="position:absolute;bottom:16px;left:20px;right:20px;">
+            <div style="background:rgba(255,255,255,.08);border-radius:99px;height:6px;overflow:hidden;">
+              <div style="height:100%;background:linear-gradient(90deg,#1A56DB,#7C3AED);border-radius:99px;width:55%;animation:grow 3s ease-in-out infinite alternate;"></div>
+            </div>
+            <div style="color:rgba(255,255,255,.4);font-size:11px;margin-top:6px;text-align:right;">~2 min remaining</div>
+          </div>
         </div>
         <div class="trailer-info">
           <h4>Script to Video in 4 Minutes</h4>
-          <p>Watch the full pipeline from script paste to finished video download</p>
+          <p>From topic to fully edited, captioned & voiced YouTube video</p>
         </div>
       </div>
-      <div class="trailer-card" onclick="document.getElementById('trailerModal2').classList.add('open')">
-        <div class="trailer-thumb" style="background:linear-gradient(135deg,#D1FAE5,#ECFDF5);">
-          🎙️
-          <div class="trailer-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
-          <div class="trailer-duration">0:10</div>
+
+      <!-- Demo 2: AI Voice & Avatar -->
+      <div class="trailer-card" onclick="document.getElementById('trailerModal2').classList.add('open')" style="cursor:pointer;">
+        <div style="background:#0F172A;padding:20px;height:190px;position:relative;overflow:hidden;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#FF5F57;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#FFBD2E;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#28CA41;display:block;"></span>
+            <span style="color:rgba(255,255,255,.4);font-size:11px;margin-left:8px;">AI Avatar Studio</span>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1A56DB,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 10px;box-shadow:0 0 0 4px rgba(26,86,219,.2);animation:float-kw 2s ease-in-out infinite;">👩</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:3px;height:40px;margin-bottom:8px;">
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;--d:0s;animation-delay:0s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.1s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.2s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.3s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.15s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.25s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.05s;"></span>
+              <span style="width:3px;background:linear-gradient(180deg,#1A56DB,#7C3AED);border-radius:99px;display:block;animation:wave-bar 0.6s ease-in-out infinite;animation-delay:.35s;"></span>
+            </div>
+            <div style="background:rgba(255,255,255,.08);border-radius:6px;padding:6px 12px;display:inline-block;">
+              <span style="color:rgba(255,255,255,.8);font-size:11px;font-weight:600;">"Welcome to ReelForge..."</span>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:14px;left:20px;right:20px;background:rgba(26,86,219,.15);border-radius:6px;padding:6px 10px;display:flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;background:#28CA41;border-radius:50%;display:block;animation:blink 1s infinite;"></span>
+            <span style="color:#60A5FA;font-size:11px;font-weight:600;">Perfect lip-sync · ElevenLabs voice</span>
+          </div>
         </div>
         <div class="trailer-info">
-          <h4>AI Voice & Avatar Demo</h4>
-          <p>See how our AI avatar delivers your script with perfect lip-sync and natural voice</p>
+          <h4>AI Voice &amp; Avatar Demo</h4>
+          <p>20+ ElevenLabs voices with HeyGen avatar lip-sync</p>
         </div>
       </div>
-      <div class="trailer-card" onclick="document.getElementById('trailerModal3').classList.add('open')">
-        <div class="trailer-thumb" style="background:linear-gradient(135deg,#FEF3C7,#FFFBEB);">
-          📈
-          <div class="trailer-play"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></div>
-          <div class="trailer-duration">0:10</div>
+
+      <!-- Demo 3: SEO Tool -->
+      <div class="trailer-card" onclick="document.getElementById('trailerModal3').classList.add('open')" style="cursor:pointer;">
+        <div style="background:#0F172A;padding:20px;height:190px;position:relative;overflow:hidden;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+            <span style="width:10px;height:10px;border-radius:50%;background:#FF5F57;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#FFBD2E;display:block;"></span>
+            <span style="width:10px;height:10px;border-radius:50%;background:#28CA41;display:block;"></span>
+            <span style="color:rgba(255,255,255,.4);font-size:11px;margin-left:8px;">SEO Engine</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="background:rgba(26,86,219,.2);border-radius:6px;padding:6px 10px;animation:fadeUp 0.5s ease forwards;">
+              <div style="color:rgba(255,255,255,.4);font-size:9px;font-weight:700;text-transform:uppercase;margin-bottom:3px;">SEO Title</div>
+              <div style="color:#fff;font-size:11px;font-weight:600;">How to Make $500 Online in 2026...</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);animation:fadeUp 0.5s ease 0.2s forwards;opacity:0;">
+                <span style="color:rgba(255,255,255,.7);font-size:11px;">make money online fast</span>
+                <div style="display:flex;align-items:center;gap:6px;"><span style="color:#60A5FA;font-size:10px;font-weight:700;">2.4M</span><span style="background:rgba(255,189,46,.15);color:#FFBD2E;font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;">Med</span></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);animation:fadeUp 0.5s ease 0.4s forwards;opacity:0;">
+                <span style="color:rgba(255,255,255,.7);font-size:11px;">AI tools for beginners</span>
+                <div style="display:flex;align-items:center;gap:6px;"><span style="color:#60A5FA;font-size:10px;font-weight:700;">890K</span><span style="background:rgba(40,202,65,.15);color:#28CA41;font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;">Low</span></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;animation:fadeUp 0.5s ease 0.6s forwards;opacity:0;">
+                <span style="color:rgba(255,255,255,.7);font-size:11px;">passive income 2026</span>
+                <div style="display:flex;align-items:center;gap:6px;"><span style="color:#60A5FA;font-size:10px;font-weight:700;">3.2M</span><span style="background:rgba(239,68,68,.15);color:#F87171;font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;">High</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:14px;left:20px;right:20px;background:rgba(40,202,65,.1);border-radius:6px;padding:5px 10px;">
+            <span style="color:#28CA41;font-size:11px;font-weight:600;">✓ 30 tags auto-generated</span>
+          </div>
         </div>
         <div class="trailer-info">
-          <h4>SEO & Viral Keywords Tool</h4>
-          <p>See how ReelForge auto-generates YouTube SEO titles, tags, and viral hooks</p>
+          <h4>SEO &amp; Viral Keywords Tool</h4>
+          <p>AI generates title, description, 30 tags &amp; keyword analysis</p>
         </div>
       </div>
+
     </div>
   </div>
 </section>
